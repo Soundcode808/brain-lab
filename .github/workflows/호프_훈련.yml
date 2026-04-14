@@ -33,6 +33,7 @@ jobs:
         run: |
           git config user.name "호프 인큐베이터"
           git config user.email "hope@brain-lab.ai"
+          git pull --rebase origin main
           git add 호프/연결상태.npy
           git add 호프/성장기록.json
           git add 호프/마음상태.json
@@ -40,5 +41,4 @@ jobs:
           git add 호프_B/연결상태_B.npy
           git add 호프_B/성장기록_B.json
           git diff --cached --quiet || git commit -m "호프 A·B 성장 $(date '+%Y-%m-%d')"
-          git pull --rebase origin main
           git push
