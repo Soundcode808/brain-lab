@@ -67,6 +67,22 @@
       "formed": 10873,
       "pruned": 0,
       "avg_active": 400.0
+    },
+    {
+      "date": "2026-04-14T22:31:29.123467",
+      "session": 9,
+      "connections": 131569,
+      "formed": 11960,
+      "pruned": 0,
+      "avg_active": 400.0,
+      "emotion": {
+        "satisfaction": 0.62,
+        "curiosity": 0.53,
+        "anxiety": 0.26,
+        "fatigue": 0.22
+      },
+      "action": "균형",
+      "prediction": "예측 불가 (데이터 부족)"
     }
   ]
 }
