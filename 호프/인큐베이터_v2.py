@@ -8,6 +8,10 @@ v1과 달라진 것:
 
 뉴런 회로(L0~L3) 위에 심리 레이어(L4~L6)가 올라간 구조.
 호프가 이제 자기 상태를 느끼고 반응하면서 성장한다.
+
+v3: 뉴런 수 확장 N_E 400→1000 (연결 한계 4배)
+  - 자동 마이그레이션: 기존 (400,400) 상태 → (1000,1000) 확장
+  - 예측 버킷 2.5배 스케일업
 """
 
 import numpy as np
@@ -21,7 +25,7 @@ LOG_FILE    = os.path.join(HOPE_DIR, '성장기록.json')
 MIND_FILE   = os.path.join(HOPE_DIR, '마음상태.json')
 
 # ── 뉴런 파라미터 ────────────────────────────────────────────────
-N_E, N_I = 400, 100
+N_E, N_I = 1000, 250
 N        = N_E + N_I
 E_idx    = np.arange(N_E)
 I_idx    = np.arange(N_E, N)
@@ -167,9 +171,9 @@ class PredictionCore:
         self.total       = 0
 
     def _bucket(self, formed):
-        if formed < 3000:    return "소성장"
-        elif formed < 7000:  return "중성장"
-        elif formed < 12000: return "대성장"
+        if formed < 7500:    return "소성장"
+        elif formed < 17500: return "중성장"
+        elif formed < 30000: return "대성장"
         else:                return "폭발성장"
 
     def observe(self, formed):
@@ -234,7 +238,25 @@ def build_fixed(seed=0):
 def load_neuron_state():
     if os.path.exists(STATE_FILE):
         ee = np.load(STATE_FILE)
-        print(f"  이전 연결 상태 불러옴: {int(ee.sum()):,}개")
+        # 크기가 다르면 마이그레이션
+        if ee.shape != (N_E, N_E):
+            old_N = ee.shape[0]
+            print(f"  뉴런 확장 마이그레이션: {old_N} → {N_E}")
+            new_ee = np.zeros((N_E, N_E), dtype=bool)
+            new_ee[:old_N, :old_N] = ee   # 기존 연결 보존
+            # 새 뉴런들 초기화 (기존 연결 확률로)
+            rng_m = np.random.RandomState(999)
+            for j in range(old_N, N_E):   # 새 뉴런 열
+                m = rng_m.rand(N_E) < P_EE
+                m[j] = False
+                new_ee[m, j] = True
+            for j in range(old_N):         # 기존 뉴런 → 새 뉴런 연결
+                m = rng_m.rand(N_E - old_N) < P_EE
+                new_ee[old_N:N_E, j][m] = True
+            ee = new_ee
+            print(f"  마이그레이션 완료: {int(ee.sum()):,}개 연결")
+        else:
+            print(f"  이전 연결 상태 불러옴: {int(ee.sum()):,}개")
     else:
         rng = np.random.RandomState(0)
         ee  = np.zeros((N_E, N_E), dtype=bool)

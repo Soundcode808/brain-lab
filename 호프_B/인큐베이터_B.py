@@ -26,7 +26,7 @@ MIND_FILE   = os.path.join(HOPE_B_DIR, '마음상태_B.json')
 SIGNAL_FILE = os.path.join(HOPE_A_DIR, 'A신호.json')   # A가 남긴 신호
 
 # ── 뉴런 파라미터 ────────────────────────────────────────────────
-N_E, N_I = 400, 100
+N_E, N_I = 1000, 250
 N        = N_E + N_I
 E_idx    = np.arange(N_E)
 I_idx    = np.arange(N_E, N)
@@ -74,7 +74,7 @@ def load_signal_from_A():
         for idx in active_indices:
             if idx < N_E:
                 stim_mask[idx] = True
-        signal_strength = min(len(active_indices) / N_E, 1.0)  # 0~1
+        signal_strength = min(len(active_indices) / N_E, 1.0)  # 0~1 (N_E=1000 기준)
         return stim_mask, signal_strength, formed_a
     else:
         # A 신호 없으면 기본 패턴
@@ -103,7 +103,25 @@ def build_fixed(seed=1):   # B는 seed=1로 A와 다른 초기 구조
 def load_state():
     if os.path.exists(STATE_FILE):
         ee = np.load(STATE_FILE)
-        print(f"  B 이전 상태 불러옴: {int(ee.sum()):,}개 연결")
+        # 크기가 다르면 마이그레이션
+        if ee.shape != (N_E, N_E):
+            old_N = ee.shape[0]
+            print(f"  B 뉴런 확장 마이그레이션: {old_N} → {N_E}")
+            new_ee = np.zeros((N_E, N_E), dtype=bool)
+            new_ee[:old_N, :old_N] = ee   # 기존 연결 보존
+            # 새 뉴런들 초기화 (기존 연결 확률로)
+            rng_m = np.random.RandomState(1)  # B는 seed=1 유지
+            for j in range(old_N, N_E):   # 새 뉴런 열
+                m = rng_m.rand(N_E) < P_EE
+                m[j] = False
+                new_ee[m, j] = True
+            for j in range(old_N):         # 기존 뉴런 → 새 뉴런 연결
+                m = rng_m.rand(N_E - old_N) < P_EE
+                new_ee[old_N:N_E, j][m] = True
+            ee = new_ee
+            print(f"  B 마이그레이션 완료: {int(ee.sum()):,}개 연결")
+        else:
+            print(f"  B 이전 상태 불러옴: {int(ee.sum()):,}개 연결")
     else:
         rng = np.random.RandomState(1)
         ee  = np.zeros((N_E, N_E), dtype=bool)
