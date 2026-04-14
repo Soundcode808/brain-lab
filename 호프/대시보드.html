@@ -588,18 +588,18 @@
                 <div class="gauge-container">
                   <svg class="gauge-svg" viewBox="0 0 120 120">
                     <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-border)" stroke-width="8"/>
-                    <circle id="gauge-stability" cx="60" cy="60" r="50" fill="none" stroke="var(--violet)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
+                    <circle id="gauge-curiosity" cx="60" cy="60" r="50" fill="none" stroke="var(--violet)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
                   </svg>
-                  <div class="gauge-label"><div class="gauge-value" id="val-stability">0</div><div class="gauge-unit">안정</div></div>
+                  <div class="gauge-label"><div class="gauge-value" id="val-curiosity">0</div><div class="gauge-unit">호기심</div></div>
                 </div>
               </div>
               <div style="display:flex;flex-direction:column;align-items:center">
                 <div class="gauge-container">
                   <svg class="gauge-svg" viewBox="0 0 120 120">
                     <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-border)" stroke-width="8"/>
-                    <circle id="gauge-growth" cx="60" cy="60" r="50" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
+                    <circle id="gauge-fatigue" cx="60" cy="60" r="50" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
                   </svg>
-                  <div class="gauge-label"><div class="gauge-value" id="val-growth">0</div><div class="gauge-unit">성장</div></div>
+                  <div class="gauge-label"><div class="gauge-value" id="val-fatigue">0</div><div class="gauge-unit">피로</div></div>
                 </div>
               </div>
             </div>
@@ -654,18 +654,18 @@
             <div class="gauge-container" style="width:150px;height:150px">
               <svg class="gauge-svg" viewBox="0 0 120 120">
                 <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-border)" stroke-width="8"/>
-                <circle id="emotion-gauge-stability" cx="60" cy="60" r="50" fill="none" stroke="var(--violet)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
+                <circle id="emotion-gauge-curiosity" cx="60" cy="60" r="50" fill="none" stroke="var(--violet)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
               </svg>
-              <div class="gauge-label"><div class="gauge-value" id="emotion-val-stability">0</div><div class="gauge-unit">안정성</div></div>
+              <div class="gauge-label"><div class="gauge-value" id="emotion-val-curiosity">0</div><div class="gauge-unit">호기심</div></div>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:center">
             <div class="gauge-container" style="width:150px;height:150px">
               <svg class="gauge-svg" viewBox="0 0 120 120">
                 <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-border)" stroke-width="8"/>
-                <circle id="emotion-gauge-growth" cx="60" cy="60" r="50" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
+                <circle id="emotion-gauge-fatigue" cx="60" cy="60" r="50" fill="none" stroke="var(--yellow)" stroke-width="8" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dashoffset 1s ease-out" stroke-dasharray="314" stroke-dashoffset="314"/>
               </svg>
-              <div class="gauge-label"><div class="gauge-value" id="emotion-val-growth">0</div><div class="gauge-unit">성장욕</div></div>
+              <div class="gauge-label"><div class="gauge-value" id="emotion-val-fatigue">0</div><div class="gauge-unit">피로</div></div>
             </div>
           </div>
         </div>
@@ -783,76 +783,112 @@
     }
 
     function renderDashboard() {
-      const hopA = appState.data.hopA || {}, hopB = appState.data.hopB || {}, emotion = appState.data.emotion || {};
-      const conn = hopA.final?.total_connections || 0, sess = (hopA.sessions || []).length;
-      const formed = hopA.final?.formed || 0, avgAct = hopA.final?.avg_active || 0;
-      const sat = emotion.satisfaction || 50, anx = emotion.anxiety || 30;
-      const stab = emotion.stability || 60, grw = emotion.growth_drive || 70;
+      const hopA = appState.data.hopA || {};
+      const hopB = appState.data.hopB || {};
+      const emotionFile = appState.data.emotion || {};
 
-      const dens = (conn / 250000 * 100).toFixed(1), actRate = (avgAct / 500 * 100).toFixed(1);
-      const bal = ((sat - anx) * 100).toFixed(0);
-      const prev = hopA.sessions && hopA.sessions.length > 1 ? hopA.sessions[hopA.sessions.length - 2].formed || 1 : 1;
-      const accel = ((formed / prev - 1) * 100).toFixed(1);
-      const eff = (formed / Math.max(avgAct, 1)).toFixed(1);
+      // ── 세션 데이터 (마지막 세션 기준) ──────────────────────────
+      const sessions = hopA.sessions || [];
+      const lastSess = sessions.length > 0 ? sessions[sessions.length - 1] : {};
+      const conn    = lastSess.connections || 0;
+      const sessNum = sessions.length;
+      const formed  = lastSess.formed || 0;
+      const avgAct  = lastSess.avg_active || 0;
+      const actionText = lastSess.action || '분석 중';
 
-      const domEmo = Math.max(sat, anx, stab, grw) === sat ? '만족' : Math.max(sat, anx, stab, grw) === anx ? '불안' : Math.max(sat, anx, stab, grw) === stab ? '안정' : '성장';
+      // ── 감정 데이터 (마음상태.json → emotion.{...}) ───────────────
+      const emoData = emotionFile.emotion || {};
+      const sat = emoData.satisfaction || 0;
+      const anx = emoData.anxiety     || 0;
+      const cur = emoData.curiosity   || 0;
+      const fat = emoData.fatigue     || 0;
 
+      // ── 예측 (prediction 객체 → last_state) ───────────────────────
+      const predObj  = emotionFile.prediction || {};
+      const predText = predObj.last_state || '예측 중';
+
+      // ── 파생 지표 ─────────────────────────────────────────────────
+      const N_E_MAX   = 1000;
+      const dens      = (conn / (N_E_MAX * N_E_MAX) * 100).toFixed(1);
+      const actRate   = (avgAct / N_E_MAX * 100).toFixed(1);
+      const bal       = ((sat - anx) * 100).toFixed(0);
+      const prevSess  = sessions.length > 1 ? sessions[sessions.length - 2] : null;
+      const prevFormed = prevSess?.formed || 0;
+      const accel     = prevFormed > 0 ? ((formed / prevFormed - 1) * 100).toFixed(1) + '%' : '초기';
+      const eff       = (formed / Math.max(avgAct, 1)).toFixed(1);
+
+      // ── 지배 감정 ─────────────────────────────────────────────────
+      const emoMap = { 만족: sat, 불안: anx, 호기심: cur, 피로: fat };
+      const domEmo = Object.entries(emoMap).reduce((a, b) => a[1] >= b[1] ? a : b)[0];
+
+      // ── 표시용 퍼센트 (0-1 → 0-100) ──────────────────────────────
+      const satP = Math.round(sat * 100);
+      const anxP = Math.round(anx * 100);
+      const curP = Math.round(cur * 100);
+      const fatP = Math.round(fat * 100);
+
+      // ── HUD ───────────────────────────────────────────────────────
       animateCounter(document.getElementById('hud-connections'), 0, conn);
-      animateCounter(document.getElementById('hud-sessions'), 0, sess);
+      animateCounter(document.getElementById('hud-sessions'),    0, sessNum);
       document.getElementById('hud-emotion').textContent = domEmo;
       animateCounter(document.getElementById('hud-density'), 0, parseFloat(dens));
 
-      animateCounter(document.getElementById('stat-density'), 0, parseFloat(dens));
-      animateCounter(document.getElementById('stat-activation'), 0, parseFloat(actRate));
+      // ── 개요 탭 스탯 ──────────────────────────────────────────────
+      animateCounter(document.getElementById('stat-density'),   0, parseFloat(dens));
+      animateCounter(document.getElementById('stat-activation'),0, parseFloat(actRate));
       document.getElementById('stat-growth-accel').textContent = accel;
 
-      animateGauge(document.getElementById('gauge-satisfaction'), sat);
-      animateGauge(document.getElementById('gauge-anxiety'), anx);
-      animateGauge(document.getElementById('gauge-stability'), stab);
-      animateGauge(document.getElementById('gauge-growth'), grw);
+      // ── 개요 탭 게이지 ────────────────────────────────────────────
+      animateGauge(document.getElementById('gauge-satisfaction'), satP);
+      animateGauge(document.getElementById('gauge-anxiety'),      anxP);
+      animateGauge(document.getElementById('gauge-curiosity'),    curP);
+      animateGauge(document.getElementById('gauge-fatigue'),      fatP);
+      document.getElementById('val-satisfaction').textContent = satP;
+      document.getElementById('val-anxiety').textContent      = anxP;
+      document.getElementById('val-curiosity').textContent    = curP;
+      document.getElementById('val-fatigue').textContent      = fatP;
 
-      document.getElementById('val-satisfaction').textContent = sat;
-      document.getElementById('val-anxiety').textContent = anx;
-      document.getElementById('val-stability').textContent = stab;
-      document.getElementById('val-growth').textContent = grw;
+      // ── 개요 탭 현재 상태 ─────────────────────────────────────────
+      document.getElementById('state-judgment').textContent  = actionText;
+      document.getElementById('state-prediction').textContent= predText;
+      document.getElementById('state-balance').textContent   = bal + '%';
 
-      document.getElementById('state-judgment').textContent = emotion.judgment || '분석 중';
-      document.getElementById('state-prediction').textContent = emotion.prediction || '예측 중';
-      document.getElementById('state-balance').textContent = bal;
+      renderGrowthChart(sessions);
 
-      renderGrowthChart(hopA.sessions || []);
+      // ── 감정 탭 게이지 ────────────────────────────────────────────
+      animateGauge(document.getElementById('emotion-gauge-satisfaction'), satP);
+      animateGauge(document.getElementById('emotion-gauge-anxiety'),      anxP);
+      animateGauge(document.getElementById('emotion-gauge-curiosity'),    curP);
+      animateGauge(document.getElementById('emotion-gauge-fatigue'),      fatP);
+      document.getElementById('emotion-val-satisfaction').textContent = satP;
+      document.getElementById('emotion-val-anxiety').textContent      = anxP;
+      document.getElementById('emotion-val-curiosity').textContent    = curP;
+      document.getElementById('emotion-val-fatigue').textContent      = fatP;
+      document.getElementById('emotion-judgment').textContent   = actionText;
+      document.getElementById('emotion-prediction').textContent = predText;
 
-      animateGauge(document.getElementById('emotion-gauge-satisfaction'), sat);
-      animateGauge(document.getElementById('emotion-gauge-anxiety'), anx);
-      animateGauge(document.getElementById('emotion-gauge-stability'), stab);
-      animateGauge(document.getElementById('emotion-gauge-growth'), grw);
-
-      document.getElementById('emotion-val-satisfaction').textContent = sat;
-      document.getElementById('emotion-val-anxiety').textContent = anx;
-      document.getElementById('emotion-val-stability').textContent = stab;
-      document.getElementById('emotion-val-growth').textContent = grw;
-
-      document.getElementById('emotion-judgment').textContent = emotion.judgment || '분석 중';
-      document.getElementById('emotion-prediction').textContent = emotion.prediction || '예측 중';
-
-      const hopBConn = hopB.final?.total_connections || 0, hopBFormed = hopB.final?.formed || 0;
-      const sigStr = hopA.final?.formed > 0 ? ((hopBFormed / hopA.final.formed) * 100).toFixed(1) : 0;
+      // ── 에이전트 탭 ───────────────────────────────────────────────
+      const bSessions  = hopB.sessions || [];
+      const lastBSess  = bSessions.length > 0 ? bSessions[bSessions.length - 1] : {};
+      const hopBConn   = lastBSess.connections || 0;
+      const hopBFormed = lastBSess.formed      || 0;
+      const sigStr     = formed > 0 ? ((hopBFormed / formed) * 100).toFixed(1) : '0.0';
 
       document.querySelector('[data-agent="A"][data-stat="connections"]').textContent = conn.toLocaleString();
-      document.querySelector('[data-agent="A"][data-stat="sessions"]').textContent = sess;
-      document.querySelector('[data-agent="A"][data-stat="emotion"]').textContent = domEmo;
-
+      document.querySelector('[data-agent="A"][data-stat="sessions"]').textContent    = sessNum;
+      document.querySelector('[data-agent="A"][data-stat="emotion"]').textContent     = domEmo;
       document.querySelector('[data-agent="B"][data-stat="connections"]').textContent = hopBConn.toLocaleString();
       document.querySelector('[data-agent="B"][data-stat="received-rate"]').textContent = sigStr;
       document.getElementById('signal-strength').textContent = sigStr + '%';
 
-      animateCounter(document.getElementById('network-density'), 0, parseFloat(dens));
-      animateCounter(document.getElementById('network-activation'), 0, parseFloat(actRate));
+      // ── 네트워크 탭 ───────────────────────────────────────────────
+      animateCounter(document.getElementById('network-density'),   0, parseFloat(dens));
+      animateCounter(document.getElementById('network-activation'),0, parseFloat(actRate));
       document.getElementById('network-efficiency').textContent = eff;
 
-      renderSessionLogs(hopA.sessions || []);
+      renderSessionLogs(sessions);
       renderRoadmap();
-      renderMiniChart(hopA.sessions || []);
+      renderMiniChart(sessions);
     }
 
     function renderMiniChart(sessions) {
@@ -867,11 +903,11 @@
       const cw = w - pad * 2, ch = h - pad * 2;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
 
-      const maxConn = Math.max(...sessions.map(s => s.final?.total_connections || 0)) || 100;
+      const maxConn = Math.max(...sessions.map(s => s.connections || 0)) || 100;
       const points = sessions.map((s, i) => ({
         x: pad + (i / (sessions.length - 1 || 1)) * cw,
-        y: h - pad - ((s.final?.total_connections || 0) / maxConn) * ch,
-        connections: s.final?.total_connections || 0,
+        y: h - pad - ((s.connections || 0) / maxConn) * ch,
+        connections: s.connections || 0,
         date: s.date || `세션 ${i + 1}`
       }));
 
@@ -908,14 +944,14 @@
       const cw = w - pad * 2, ch = h - pad * 2;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
 
-      const maxConn = Math.max(...sessions.map(s => s.final?.total_connections || 0)) || 100;
+      const maxConn = Math.max(...sessions.map(s => s.connections || 0)) || 100;
       const points = sessions.map((s, i) => {
-        const prev = i > 0 ? (sessions[i - 1].final?.total_connections || 0) : 0;
-        const growth = prev > 0 ? (((s.final?.total_connections || 0) / prev - 1) * 100).toFixed(1) : '0.0';
+        const prev = i > 0 ? (sessions[i - 1].connections || 0) : 0;
+        const growth = prev > 0 ? (((s.connections || 0) / prev - 1) * 100).toFixed(1) : '0.0';
         return {
           x: pad + (i / (sessions.length - 1 || 1)) * cw,
-          y: h - pad - ((s.final?.total_connections || 0) / maxConn) * ch,
-          connections: s.final?.total_connections || 0,
+          y: h - pad - ((s.connections || 0) / maxConn) * ch,
+          connections: s.connections || 0,
           date: s.date || `세션 ${i + 1}`,
           growth: growth
         };
@@ -959,10 +995,11 @@
         return;
       }
       sessions.forEach((s, i) => {
-        const prev = i > 0 ? sessions[i - 1].final?.total_connections || 0 : 0;
-        const growth = prev > 0 ? (((s.final?.total_connections || 0) / prev - 1) * 100).toFixed(1) : '0.0';
+        const prev = i > 0 ? sessions[i - 1].connections || 0 : 0;
+        const curr = s.connections || 0;
+        const growth = prev > 0 ? ((curr / prev - 1) * 100).toFixed(1) : '0.0';
         const row = document.createElement('tr');
-        row.innerHTML = `<td>S${i + 1}</td><td>${s.date || '-'}</td><td>${(s.final?.total_connections || 0).toLocaleString()}</td><td>${growth}%</td><td><span style="color:var(--green)">활성</span></td>`;
+        row.innerHTML = `<td>S${i + 1}</td><td>${s.date || '-'}</td><td>${curr.toLocaleString()}</td><td>${growth}%</td><td><span style="color:var(--green)">활성</span></td>`;
         tbody.appendChild(row);
       });
     }
@@ -977,7 +1014,7 @@
         { level: 'L5', title: '감정', status: 'completed', desc: '감정 상태 모델링 및 조절 호프에 통합' },
         { level: 'L6', title: '예측', status: 'completed', desc: '미래 상태 예측 및 계획 호프에 통합' },
         { level: '인프라', title: '자동화 + A·B 상호작용', status: 'in-progress', desc: '호프_A와 호프_B 간의 신호 송수신 자동화 구현 중' },
-        { level: '확장', title: '뉴런 수 확장 400→1000', status: 'pending', desc: '네트워크 규모 확대 및 성능 최적화 예정' },
+        { level: '확장', title: '뉴런 수 확장 400→1000', status: 'completed', desc: '2026-04-15 완료. N_E=1000으로 확장, 기존 연결 보존 마이그레이션 완료.' },
         { level: 'L7', title: '미정', status: 'pending', desc: '항상성, 사회성, 메타인지 중 선택 대기' }
       ];
 
