@@ -40,4 +40,5 @@ jobs:
           git add 호프_B/연결상태_B.npy
           git add 호프_B/성장기록_B.json
           git diff --cached --quiet || git commit -m "호프 A·B 성장 $(date '+%Y-%m-%d')"
+          git pull --rebase origin main
           git push
