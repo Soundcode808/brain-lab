@@ -1,0 +1,102 @@
+{
+  "experiment": "구조적 가소성 (죽음 없는 버전)",
+  "timestamp": "2026-04-14T21:19:47.810103",
+  "design_note": "연결 못 한 뉴런은 사라지지 않고 기다린다. 기회는 모두에게.",
+  "params": {
+    "N_E": 400,
+    "N_I": 100,
+    "n_trials": 10,
+    "consistency_form_thresh": 6,
+    "p_form": 0.5,
+    "p_prune": 0.2,
+    "stim_neurons": 160
+  },
+  "results": {
+    "initial_connections": 55645,
+    "final_connections": 30249,
+    "net_change": -25396,
+    "total_formed": 18460,
+    "total_pruned": 43856,
+    "new_conn_in_stim": 15239,
+    "new_conn_out_stim": 169,
+    "stim_concentration": 0.989,
+    "random_expected": 0.16,
+    "concentration_ratio": 6.18,
+    "history": [
+      {
+        "trial": 1,
+        "connections": 44589,
+        "active_neurons": 397,
+        "formed": 0,
+        "pruned": 11056
+      },
+      {
+        "trial": 2,
+        "connections": 35582,
+        "active_neurons": 242,
+        "formed": 0,
+        "pruned": 9007
+      },
+      {
+        "trial": 3,
+        "connections": 29847,
+        "active_neurons": 182,
+        "formed": 0,
+        "pruned": 5735
+      },
+      {
+        "trial": 4,
+        "connections": 25259,
+        "active_neurons": 167,
+        "formed": 0,
+        "pruned": 4588
+      },
+      {
+        "trial": 5,
+        "connections": 21526,
+        "active_neurons": 163,
+        "formed": 0,
+        "pruned": 3733
+      },
+      {
+        "trial": 6,
+        "connections": 22986,
+        "active_neurons": 165,
+        "formed": 4305,
+        "pruned": 2845
+      },
+      {
+        "trial": 7,
+        "connections": 25217,
+        "active_neurons": 162,
+        "formed": 4597,
+        "pruned": 2366
+      },
+      {
+        "trial": 8,
+        "connections": 28367,
+        "active_neurons": 163,
+        "formed": 5043,
+        "pruned": 1893
+      },
+      {
+        "trial": 9,
+        "connections": 29916,
+        "active_neurons": 163,
+        "formed": 3000,
+        "pruned": 1451
+      },
+      {
+        "trial": 10,
+        "connections": 30249,
+        "active_neurons": 162,
+        "formed": 1515,
+        "pruned": 1182
+      }
+    ],
+    "passed_new_formed": true,
+    "passed_concentrated": true
+  },
+  "all_passed": true,
+  "verdict": "PASS — 경험 기반 구조 변화 확인"
+}

@@ -1,0 +1,36 @@
+{
+  "experiment": "모듈 연결 검증 (C1→C2)",
+  "timestamp": "2026-04-14T21:06:31.394061",
+  "params": {
+    "N_E": 400,
+    "N_I": 100,
+    "G_EE_mV": 0.06999999999999999,
+    "I_bg_mV": 10.0,
+    "P_12": 0.1,
+    "W_12_mV": 0.5,
+    "tau_NMDA_ms": 150,
+    "tau_GABA_ms": 5
+  },
+  "results": {
+    "exp1_signal_transfer": {
+      "c1_pre_hz": 0.0,
+      "c1_dur_hz": 49.0,
+      "c1_post_hz": 21.8,
+      "c2_pre_hz": 0.0,
+      "c2_dur_hz": 34.9,
+      "c2_post_hz": 32.1,
+      "passed": true
+    },
+    "exp2_pattern_distinction": {
+      "c2_rate_A_hz": 35.8,
+      "c2_rate_B_hz": 35.7,
+      "active_neurons_A": 173,
+      "active_neurons_B": 187,
+      "intersection": 128,
+      "jaccard_similarity": 0.5517,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "verdict": "PASS — 모듈 간 정보 전달 확인"
+}

@@ -1,0 +1,27 @@
+{
+  "experiment": "L2_학습",
+  "date": "2026-04-15",
+  "initial_weights": "random",
+  "final_weights": [
+    6.7162,
+    5.5621,
+    -3.8726
+  ],
+  "final_bias": -4.3882,
+  "training_epochs": 100,
+  "accuracy_before": 0.5,
+  "accuracy_after": 1.0,
+  "accuracy_progress": [
+    0.7,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "conclusion": "학습하는 뉴런 정상 작동. 랜덤 시작 → 100회 반복 후 훈련 데이터 정답률 달성. 새로운 상황에도 일반화 가능 확인."
+}

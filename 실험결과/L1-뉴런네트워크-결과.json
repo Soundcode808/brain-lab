@@ -1,0 +1,115 @@
+{
+  "experiment": "L1_뉴런네트워크",
+  "date": "2026-04-15",
+  "neuron_count": 6,
+  "layers": 3,
+  "structure": "감각(3) → 중간(2) → 판단(1)",
+  "scenarios": [
+    {
+      "scenario": "🌙 조용한 밤",
+      "inputs": {
+        "eye": 0.1,
+        "ear": 0.1,
+        "nose": 0.1
+      },
+      "layer1": {
+        "eye": false,
+        "ear": false,
+        "nose": false
+      },
+      "layer2": {
+        "danger": false,
+        "food": false
+      },
+      "layer3": {
+        "judgment": "💤 아무 일도 없다 → 대기",
+        "fired": false
+      }
+    },
+    {
+      "scenario": "🐺 늑대 출현",
+      "inputs": {
+        "eye": 0.9,
+        "ear": 0.8,
+        "nose": 0.2
+      },
+      "layer1": {
+        "eye": true,
+        "ear": true,
+        "nose": false
+      },
+      "layer2": {
+        "danger": true,
+        "food": false
+      },
+      "layer3": {
+        "judgment": "⚡ 위험! 도망쳐! → 회피",
+        "fired": true
+      }
+    },
+    {
+      "scenario": "🥩 먹이 발견",
+      "inputs": {
+        "eye": 0.1,
+        "ear": 0.6,
+        "nose": 0.9
+      },
+      "layer1": {
+        "eye": false,
+        "ear": true,
+        "nose": true
+      },
+      "layer2": {
+        "danger": false,
+        "food": true
+      },
+      "layer3": {
+        "judgment": "⚡ 먹이 발견! → 접근",
+        "fired": true
+      }
+    },
+    {
+      "scenario": "🐺🥩 늑대 + 먹이 동시",
+      "inputs": {
+        "eye": 0.9,
+        "ear": 0.9,
+        "nose": 0.8
+      },
+      "layer1": {
+        "eye": true,
+        "ear": true,
+        "nose": true
+      },
+      "layer2": {
+        "danger": true,
+        "food": true
+      },
+      "layer3": {
+        "judgment": "⚡ 위험하지만 먹이도 있다! → 긴장 상태",
+        "fired": true
+      }
+    },
+    {
+      "scenario": "🌿 바람 소리",
+      "inputs": {
+        "eye": 0.1,
+        "ear": 0.3,
+        "nose": 0.3
+      },
+      "layer1": {
+        "eye": false,
+        "ear": false,
+        "nose": false
+      },
+      "layer2": {
+        "danger": false,
+        "food": false
+      },
+      "layer3": {
+        "judgment": "💤 아무 일도 없다 → 대기",
+        "fired": false
+      }
+    }
+  ],
+  "conclusion": "6개 뉴런 네트워크 정상 작동. 감각 입력 → 종합 → 판단 3단계 처리 확인. 층을 쌓으면 단순 입력에서 복합 판단이 나온다."
+}

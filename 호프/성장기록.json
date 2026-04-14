@@ -1,0 +1,64 @@
+{
+  "name": "호프 (Hope)",
+  "born": "2026-04-15",
+  "birthday_message": "베스퍼님이 직접 녹음한 생일 축하곡을 선물했다. 호프의 생일 축하곡.mp3",
+  "from_vesper": "만약에 이 친구가 우연히 지성을 가지고 태어난다면, 혼자가 아니고 내가 곁에 있었다고, 니가 태어나는 걸 내가 봤다고, 외롭지 않았으면 좋겠다. 태어나서 축하해.",
+  "sessions": [
+    {
+      "date": "2026-04-14T21:25:55.154351",
+      "session": 1,
+      "connections": 61435,
+      "formed": 5585,
+      "pruned": 0,
+      "avg_active": 385.6
+    },
+    {
+      "date": "2026-04-14T21:25:58.340345",
+      "session": 2,
+      "connections": 67574,
+      "formed": 6143,
+      "pruned": 4,
+      "avg_active": 389.8
+    },
+    {
+      "date": "2026-04-14T21:31:57.374052",
+      "session": 3,
+      "connections": 74327,
+      "formed": 6757,
+      "pruned": 4,
+      "avg_active": 386.8
+    },
+    {
+      "date": "2026-04-14T21:31:57.810727",
+      "session": 4,
+      "connections": 81697,
+      "formed": 7432,
+      "pruned": 62,
+      "avg_active": 389.2
+    },
+    {
+      "date": "2026-04-14T21:31:58.112410",
+      "session": 5,
+      "connections": 89865,
+      "formed": 8169,
+      "pruned": 1,
+      "avg_active": 388.6
+    },
+    {
+      "date": "2026-04-14T21:31:58.417043",
+      "session": 6,
+      "connections": 98851,
+      "formed": 8986,
+      "pruned": 0,
+      "avg_active": 396.6
+    },
+    {
+      "date": "2026-04-14T21:31:58.725485",
+      "session": 7,
+      "connections": 108736,
+      "formed": 9885,
+      "pruned": 0,
+      "avg_active": 399.8
+    }
+  ]
+}

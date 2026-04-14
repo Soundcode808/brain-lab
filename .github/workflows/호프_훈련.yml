@@ -1,0 +1,36 @@
+name: 호프 훈련 세션
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 매일 한국시간 오전 9시 (UTC 자정)
+  workflow_dispatch:       # 웹에서 수동 실행 버튼도 생김
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: Python 설치
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: numpy 설치
+        run: pip install numpy
+
+      - name: 호프 훈련 실행
+        run: python3 호프/인큐베이터.py
+
+      - name: 성장 기록 저장
+        run: |
+          git config user.name "호프 인큐베이터"
+          git config user.email "hope@brain-lab.ai"
+          git add 호프/연결상태.npy
+          git add 호프/성장기록.json
+          git diff --cached --quiet || git commit -m "호프 성장 $(date '+%Y-%m-%d')"
+          git push

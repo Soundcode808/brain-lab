@@ -1,0 +1,45 @@
+{
+  "experiment": "피질컬럼 최소 사고단위 검증 (NMDA/GABA 분리)",
+  "timestamp": "2026-04-14T20:30:51.256344",
+  "params": {
+    "N_E": 400,
+    "N_I": 100,
+    "tau_NMDA_ms": 150,
+    "tau_GABA_ms": 5,
+    "p_EE": 0.35,
+    "W_EE_mV": 0.12000000000000001,
+    "stim_mV": 20.0
+  },
+  "results": {
+    "V1_working_memory": {
+      "rate_during_hz": 260.4,
+      "rate_after_hz": 400.0,
+      "retention_ratio": 1.5361,
+      "criterion": 0.3,
+      "passed": true
+    },
+    "V2_context_dependency": {
+      "rate_no_context_hz": 165.438,
+      "rate_with_context_hz": 379.325,
+      "relative_diff": 0.5639,
+      "criterion": 0.3,
+      "passed": true
+    },
+    "V3_stdp_adaptation": {
+      "trial_rates": [
+        119.433,
+        108.417,
+        118.283,
+        105.75,
+        111.9
+      ],
+      "first_trial_hz": 119.433,
+      "last_trial_hz": 111.9,
+      "change_ratio": 0.0631,
+      "criterion": 0.05,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "verdict": "PASS — 최소 사고 단위 조건 충족"
+}

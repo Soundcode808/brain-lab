@@ -1,0 +1,40 @@
+{
+  "experiment": "피질컬럼 안정화 검증",
+  "timestamp": "2026-04-14T20:55:23.513163",
+  "params": {
+    "I_bg_mV": 10.0,
+    "g_ee_mV": 0.06999999999999999,
+    "N_E": 400,
+    "N_I": 100,
+    "tau_NMDA_ms": 150,
+    "tau_GABA_ms": 5
+  },
+  "results": {
+    "V1": {
+      "spontaneous": 0.0,
+      "during": 48.88,
+      "after": 21.33,
+      "ratio": 0.4365,
+      "passed": true
+    },
+    "V2": {
+      "no_context": 23.56,
+      "with_context": 36.46,
+      "diff": 0.3538,
+      "passed": true
+    },
+    "V3": {
+      "trials": [
+        32.3,
+        41.34,
+        41.54,
+        41.64,
+        41.69
+      ],
+      "change": 0.2906,
+      "passed": true
+    }
+  },
+  "all_passed": true,
+  "verdict": "PASS — 안정화 회로 검증 완료"
+}

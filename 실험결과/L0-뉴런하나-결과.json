@@ -1,0 +1,99 @@
+{
+  "experiment": "L0_뉴런하나",
+  "date": "2026-04-15",
+  "neuron_status": {
+    "name": "뉴런-알파",
+    "weights": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "threshold": 0.5,
+    "total_signals": 5,
+    "fires": 4,
+    "silences": 1
+  },
+  "test_results": [
+    {
+      "inputs": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "weights": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "weighted_sum": 0.15,
+      "threshold": 0.5,
+      "fired": false,
+      "signal": "💤 침묵"
+    },
+    {
+      "inputs": [
+        0.5,
+        0.5,
+        0.3
+      ],
+      "weights": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "weighted_sum": 0.65,
+      "threshold": 0.5,
+      "fired": true,
+      "signal": "⚡ 발화!"
+    },
+    {
+      "inputs": [
+        0.9,
+        0.8,
+        0.7
+      ],
+      "weights": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "weighted_sum": 1.2,
+      "threshold": 0.5,
+      "fired": true,
+      "signal": "⚡ 발화!"
+    },
+    {
+      "inputs": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "weights": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "weighted_sum": 0.5,
+      "threshold": 0.5,
+      "fired": true,
+      "signal": "⚡ 발화!"
+    },
+    {
+      "inputs": [
+        0.8,
+        0.7,
+        0.0
+      ],
+      "weights": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "weighted_sum": 0.75,
+      "threshold": 0.5,
+      "fired": true,
+      "signal": "⚡ 발화!"
+    }
+  ],
+  "conclusion": "인공 뉴런 1개가 정상 작동. 입력 × 가중치 → 합계 → 임계값 비교 → 발화/침묵 구조 확인됨."
+}

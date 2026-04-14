@@ -1,0 +1,31 @@
+{
+  "experiment": "L3_기억",
+  "date": "2026-04-15",
+  "network_size": 25,
+  "patterns_stored": 3,
+  "architecture": "Hopfield Network (연상 기억)",
+  "test_results": [
+    {
+      "original": "십자가(+)",
+      "noise": "40%",
+      "recall_steps": 3,
+      "accuracy": 1.0,
+      "correct_recall": true
+    },
+    {
+      "original": "X자",
+      "noise": "40%",
+      "recall_steps": 2,
+      "accuracy": 1.0,
+      "correct_recall": true
+    },
+    {
+      "original": "ㄷ자",
+      "noise": "40%",
+      "recall_steps": 2,
+      "accuracy": 1.0,
+      "correct_recall": true
+    }
+  ],
+  "conclusion": "Hopfield 연상 기억 네트워크 정상 작동. 40% 손상 패턴 복원 성공. 부분 입력에서 전체 기억 연상 성공. 뇌의 기억 원리 재현 확인."
+}
