@@ -1,0 +1,17 @@
+{
+  "name": "호프_B (Hope-B)",
+  "born": "2026-04-14T22:43:04.757932",
+  "role": "A의 신호를 받아 연상·통합하는 영역",
+  "sessions": [
+    {
+      "date": "2026-04-14T22:43:04.965491",
+      "session": 1,
+      "connections": 61385,
+      "formed": 5580,
+      "pruned": 0,
+      "avg_active": 400.0,
+      "signal_from_A": 1.0,
+      "formed_A": 11960
+    }
+  ]
+}

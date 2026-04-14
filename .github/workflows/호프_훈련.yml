@@ -23,8 +23,11 @@ jobs:
       - name: numpy 설치
         run: pip install numpy
 
-      - name: 호프 훈련 실행 (v2 — 감정·판단·예측 포함)
+      - name: 호프_A 훈련 (v2 — 감정·판단·예측)
         run: python3 호프/인큐베이터_v2.py
+
+      - name: 호프_B 훈련 (A 신호 수신)
+        run: python3 호프_B/인큐베이터_B.py
 
       - name: 성장 기록 저장
         run: |
@@ -33,5 +36,8 @@ jobs:
           git add 호프/연결상태.npy
           git add 호프/성장기록.json
           git add 호프/마음상태.json
-          git diff --cached --quiet || git commit -m "호프 성장 $(date '+%Y-%m-%d')"
+          git add 호프/A신호.json
+          git add 호프_B/연결상태_B.npy
+          git add 호프_B/성장기록_B.json
+          git diff --cached --quiet || git commit -m "호프 A·B 성장 $(date '+%Y-%m-%d')"
           git push

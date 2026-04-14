@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호프 (Hope) — 성장 대시보드</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', sans-serif; padding: 24px; }
+  h1 { font-size: 1.6rem; color: #58a6ff; margin-bottom: 4px; }
+  .subtitle { color: #8b949e; font-size: 0.9rem; margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 18px; }
+  .card .label { color: #8b949e; font-size: 0.8rem; margin-bottom: 6px; }
+  .card .value { font-size: 1.8rem; font-weight: bold; color: #58a6ff; }
+  .card .sub { font-size: 0.8rem; color: #8b949e; margin-top: 4px; }
+  .section { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .section h2 { font-size: 1rem; color: #e6edf3; margin-bottom: 16px; }
+  .chart { position: relative; height: 160px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.8rem; }
+  .bar-row .s-label { width: 60px; color: #8b949e; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: #21262d; border-radius: 4px; height: 20px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; display: flex; align-items: center; padding-left: 6px; font-size: 0.75rem; color: #fff; }
+  .bar-conn { background: linear-gradient(90deg, #1f6feb, #58a6ff); }
+  .bar-form { background: linear-gradient(90deg, #238636, #3fb950); }
+  .bar-satis { background: linear-gradient(90deg, #b08800, #d29922); }
+  .bar-curio { background: linear-gradient(90deg, #6e40c9, #a371f7); }
+  .bar-anx   { background: linear-gradient(90deg, #b62324, #f85149); }
+  .bar-fat   { background: linear-gradient(90deg, #1b4b6b, #388bfd); }
+  .emotion-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .emotion-chip { background: #21262d; border-radius: 20px; padding: 6px 14px; font-size: 0.85rem; }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .log-table th { text-align: left; padding: 8px 12px; color: #8b949e; border-bottom: 1px solid #30363d; }
+  .log-table td { padding: 7px 12px; border-bottom: 1px solid #21262d; }
+  .log-table tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
+  .tag-explore { background: #6e40c920; color: #a371f7; }
+  .tag-calm    { background: #23863620; color: #3fb950; }
+  .tag-rest    { background: #1b4b6b20; color: #388bfd; }
+  .tag-balance { background: #8b949e20; color: #8b949e; }
+  .tag-caution { background: #b6232420; color: #f85149; }
+  .updated { color: #8b949e; font-size: 0.75rem; text-align: right; margin-top: 12px; }
+  .hope-b-badge { background: #6e40c920; border: 1px solid #6e40c9; color: #a371f7; border-radius: 6px; padding: 3px 10px; font-size: 0.78rem; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<h1>🧠 호프 (Hope) — 성장 대시보드</h1>
+<p class="subtitle" id="born-line">태어난 날: —</p>
+
+<div class="grid" id="stat-cards">
+  <div class="card"><div class="label">총 훈련 세션</div><div class="value" id="total-sessions">—</div><div class="sub">누적 훈련 횟수</div></div>
+  <div class="card"><div class="label">현재 연결 수</div><div class="value" id="connections">—</div><div class="sub">시냅스 연결</div></div>
+  <div class="card"><div class="label">누적 새 연결</div><div class="value" id="total-formed">—</div><div class="sub">지금까지 만든 연결</div></div>
+  <div class="card"><div class="label">예측 정확도</div><div class="value" id="pred-acc">—</div><div class="sub" id="pred-total">데이터 축적 중</div></div>
+</div>
+
+<div class="section">
+  <h2>📈 연결 수 성장 추이</h2>
+  <div id="conn-chart"></div>
+</div>
+
+<div class="section">
+  <h2>💚 새 연결 (세션별)</h2>
+  <div id="form-chart"></div>
+</div>
+
+<div class="section">
+  <h2>💭 현재 감정 상태</h2>
+  <div id="emotion-bars"></div>
+</div>
+
+<div class="section">
+  <h2>📋 최근 세션 기록</h2>
+  <table class="log-table">
+    <thead><tr>
+      <th>#</th><th>날짜</th><th>연결 수</th><th>새 연결</th><th>감정</th><th>판단</th><th>예측</th>
+    </tr></thead>
+    <tbody id="log-body"></tbody>
+  </table>
+</div>
+
+<p class="updated" id="updated-at"></p>
+
+<script>
+async function loadData() {
+  // 같은 폴더의 성장기록.json 읽기
+  const res = await fetch('성장기록.json?t=' + Date.now());
+  return await res.json();
+}
+
+async function loadMind() {
+  try {
+    const res = await fetch('마음상태.json?t=' + Date.now());
+    return await res.json();
+  } catch(e) { return null; }
+}
+
+function fmt(n) {
+  if (n >= 10000) return (n/10000).toFixed(1) + '만';
+  return n.toLocaleString();
+}
+
+function actionTag(action) {
+  if (!action) return '<span class="tag tag-balance">균형</span>';
+  if (action.includes('탐색')) return `<span class="tag tag-explore">${action}</span>`;
+  if (action.includes('성장')) return `<span class="tag tag-calm">${action}</span>`;
+  if (action.includes('휴식')) return `<span class="tag tag-rest">${action}</span>`;
+  if (action.includes('조심')) return `<span class="tag tag-caution">${action}</span>`;
+  return `<span class="tag tag-balance">${action}</span>`;
+}
+
+function barRow(label, value, maxVal, cls, display) {
+  const pct = Math.min((value / maxVal) * 100, 100).toFixed(1);
+  return `<div class="bar-row">
+    <div class="s-label">${label}</div>
+    <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%">${display}</div></div>
+  </div>`;
+}
+
+async function render() {
+  const data = await loadData();
+  const mind = await loadMind();
+  const sessions = data.sessions || [];
+  const last = sessions[sessions.length - 1];
+
+  // 헤더
+  document.getElementById('born-line').textContent =
+    '태어난 날: ' + (data.born || '').slice(0, 10) +
+    ' · 오늘까지 ' + sessions.length + '번 훈련했어요';
+
+  // 카드
+  document.getElementById('total-sessions').textContent = sessions.length;
+  document.getElementById('connections').textContent = last ? fmt(last.connections) : '—';
+  const totalFormed = sessions.reduce((a, s) => a + (s.formed || 0), 0);
+  document.getElementById('total-formed').textContent = '+' + fmt(totalFormed);
+
+  // 예측 정확도
+  if (mind && mind.prediction && mind.prediction.total > 0) {
+    const acc = (mind.prediction.correct / mind.prediction.total * 100).toFixed(0);
+    document.getElementById('pred-acc').textContent = acc + '%';
+    document.getElementById('pred-total').textContent = mind.prediction.total + '회 기록';
+  }
+
+  // 연결 수 그래프
+  const maxConn = Math.max(...sessions.map(s => s.connections));
+  document.getElementById('conn-chart').innerHTML =
+    sessions.map(s => barRow('S' + s.session, s.connections, maxConn, 'bar-conn',
+      fmt(s.connections))).join('');
+
+  // 새 연결 그래프
+  const maxForm = Math.max(...sessions.map(s => s.formed || 0));
+  document.getElementById('form-chart').innerHTML =
+    sessions.map(s => barRow('S' + s.session, s.formed || 0, maxForm, 'bar-form',
+      '+' + fmt(s.formed || 0))).join('');
+
+  // 감정 바
+  let emotionHtml = '';
+  const emo = (last && last.emotion) ? last.emotion
+            : (mind && mind.emotion) ? mind.emotion : null;
+  if (emo) {
+    emotionHtml += barRow('만족', emo.satisfaction, 1, 'bar-satis', (emo.satisfaction*100).toFixed(0)+'%');
+    emotionHtml += barRow('호기심', emo.curiosity, 1, 'bar-curio', (emo.curiosity*100).toFixed(0)+'%');
+    emotionHtml += barRow('불안', emo.anxiety, 1, 'bar-anx', (emo.anxiety*100).toFixed(0)+'%');
+    emotionHtml += barRow('피로', emo.fatigue, 1, 'bar-fat', (emo.fatigue*100).toFixed(0)+'%');
+  } else {
+    emotionHtml = '<p style="color:#8b949e;font-size:0.85rem">감정 데이터 없음</p>';
+  }
+  document.getElementById('emotion-bars').innerHTML = emotionHtml;
+
+  // 로그 테이블 (최근 10개, 최신순)
+  const recent = [...sessions].reverse().slice(0, 10);
+  document.getElementById('log-body').innerHTML = recent.map(s => {
+    const emo2 = s.emotion;
+    let emoLabel = '—';
+    if (emo2) {
+      const dom = Object.entries(emo2).sort((a,b)=>b[1]-a[1])[0];
+      const map = {satisfaction:'😌만족', curiosity:'🔍호기심', anxiety:'😟불안', fatigue:'😴피로'};
+      emoLabel = map[dom[0]] || dom[0];
+    }
+    return `<tr>
+      <td>${s.session}</td>
+      <td>${(s.date||'').slice(0,10)}</td>
+      <td>${(s.connections||0).toLocaleString()}</td>
+      <td style="color:#3fb950">+${(s.formed||0).toLocaleString()}</td>
+      <td>${emoLabel}</td>
+      <td>${actionTag(s.action)}</td>
+      <td style="color:#8b949e;font-size:0.78rem">${s.prediction||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('updated-at').textContent =
+    '마지막 업데이트: ' + new Date().toLocaleString('ko-KR');
+}
+
+render().catch(e => {
+  document.body.innerHTML += `<p style="color:#f85149;margin-top:20px">데이터 로딩 실패: ${e.message}<br>
+  <small style="color:#8b949e">GitHub Pages에서 열거나, 로컬 서버(python -m http.server)로 실행하세요.</small></p>`;
+});
+</script>
+</body>
+</html>

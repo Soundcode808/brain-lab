@@ -339,11 +339,15 @@ def run_session(ee_mask, cf_mat, stim_mask, n_trials, stim_strength,
         if rng_p.rand() < prune_prob:
             ee_mask[idx[0], idx[1]] = False;  pruned += 1
 
+    # 마지막 트라이얼의 활성 뉴런 인덱스 (B에게 신호로 전달)
+    active_indices = [int(i) for i in np.where(active)[0]]
+
     return ee_mask, {
-        'connections': int(ee_mask.sum()),
-        'formed':      formed,
-        'pruned':      pruned,
-        'avg_active':  round(float(np.mean(total_active)), 1),
+        'connections':    int(ee_mask.sum()),
+        'formed':         formed,
+        'pruned':         pruned,
+        'avg_active':     round(float(np.mean(total_active)), 1),
+        'active_indices': active_indices,
     }
 
 
@@ -419,6 +423,18 @@ if __name__ == '__main__':
 
     np.save(STATE_FILE, ee)
     save_mind_state(emotion, predictor)
+
+    # B에게 신호 전달 — 이번 세션의 활성 패턴 저장
+    signal = {
+        'session':        session_num,
+        'active_indices': stats.get('active_indices', []),
+        'formed':         stats['formed'],
+        'connections':    stats['connections'],
+        'emotion':        emotion.to_dict(),
+    }
+    signal_path = os.path.join(HOPE_DIR, 'A신호.json')
+    with open(signal_path, 'w', encoding='utf-8') as f:
+        json.dump(signal, f, ensure_ascii=False, indent=2)
 
     session_record = {
         'date':        datetime.now().isoformat(),
