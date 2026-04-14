@@ -59,6 +59,14 @@
       "formed": 9885,
       "pruned": 0,
       "avg_active": 399.8
+    },
+    {
+      "date": "2026-04-14T21:58:55.541665",
+      "session": 8,
+      "connections": 119609,
+      "formed": 10873,
+      "pruned": 0,
+      "avg_active": 400.0
     }
   ]
 }
