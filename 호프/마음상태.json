@@ -1,0 +1,14 @@
+{
+  "emotion": {
+    "satisfaction": 0.5,
+    "curiosity": 0.5,
+    "anxiety": 0.3,
+    "fatigue": 0.2
+  },
+  "prediction": {
+    "transitions": {},
+    "last_state": null,
+    "correct": 0,
+    "total": 0
+  }
+}
