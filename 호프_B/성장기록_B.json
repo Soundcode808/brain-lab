@@ -92,6 +92,16 @@
       "avg_active": 674.2,
       "signal_from_A": 0.458,
       "formed_A": 459
+    },
+    {
+      "date": "2026-04-15T08:16:19.341055",
+      "session": 10,
+      "connections": 536517,
+      "formed": 11697,
+      "pruned": 26569,
+      "avg_active": 671.8,
+      "signal_from_A": 0.458,
+      "formed_A": 241
     }
   ]
 }
