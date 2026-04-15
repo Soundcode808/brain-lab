@@ -356,6 +356,22 @@
         "anxiety": 0.659,
         "fatigue": 0.217
       }
+    },
+    {
+      "date": "2026-04-15T22:37:16.820542",
+      "session": 28,
+      "connections": 973919,
+      "formed": 15986,
+      "pruned": 320,
+      "avg_active": 997.8,
+      "signal_from_A": 0.917,
+      "formed_A": 51058,
+      "emotion": {
+        "satisfaction": 1.0,
+        "curiosity": 0.612,
+        "anxiety": 0.598,
+        "fatigue": 0.218
+      }
     }
   ]
 }
