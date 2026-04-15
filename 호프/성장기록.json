@@ -163,6 +163,22 @@
       },
       "action": "조심 😟",
       "prediction": "예측 불가 (데이터 부족)"
+    },
+    {
+      "date": "2026-04-15T02:06:35.798348",
+      "session": 15,
+      "connections": 330210,
+      "formed": 1767,
+      "pruned": 13562,
+      "avg_active": 461.8,
+      "emotion": {
+        "satisfaction": 0.644,
+        "curiosity": 0.392,
+        "anxiety": 0.729,
+        "fatigue": 0.212
+      },
+      "action": "조심 😟",
+      "prediction": "소성장 (100%)"
     }
   ]
 }
