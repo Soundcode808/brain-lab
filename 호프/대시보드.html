@@ -497,6 +497,152 @@
       display: block;
     }
 
+    /* ── 제어판 ──────────────────────────────────────────────── */
+    .ctrl-wrap {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 56px;
+      z-index: 990;
+    }
+
+    .ctrl-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .ctrl-toggle:hover { background: rgba(113,112,255,0.05); }
+
+    .ctrl-chevron {
+      color: var(--t4);
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .ctrl-chevron.open { transform: rotate(180deg); }
+
+    .ctrl-body {
+      display: none;
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--card-border);
+      gap: 1.25rem;
+    }
+
+    .ctrl-body.open { display: flex; flex-wrap: wrap; align-items: flex-start; }
+
+    .ctrl-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 200px;
+    }
+
+    .ctrl-label {
+      font-size: 0.7rem;
+      color: var(--t4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .ctrl-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--t1);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.75rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    .ctrl-input:focus { border-color: var(--violet); }
+
+    .ctrl-select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--t1);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.75rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .ctrl-btn-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .ctrl-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--t2);
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .ctrl-btn:hover { background: rgba(255,255,255,0.08); color: var(--t1); }
+
+    .ctrl-btn.primary {
+      background: var(--violet);
+      border-color: var(--violet);
+      color: #fff;
+    }
+
+    .ctrl-btn.primary:hover { background: #8988ff; }
+
+    .ctrl-btn.run {
+      background: rgba(16,185,129,0.15);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .ctrl-btn.run:hover { background: rgba(16,185,129,0.25); }
+
+    .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .ctrl-log {
+      flex: 1 1 320px;
+      min-width: 280px;
+    }
+
+    .ctrl-log-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--t3);
+      font-family: 'Courier New', monospace;
+      max-height: 130px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+
+    .log-ok  { color: var(--green); }
+    .log-err { color: var(--red); }
+    .log-run { color: var(--yellow); }
+    .log-info{ color: var(--t4); }
+
+    .ctrl-status {
+      font-size: 0.75rem;
+      color: var(--t4);
+      margin-top: 0.3rem;
+      min-height: 1.2em;
+    }
+
     @media (max-width: 768px) {
       .hud-header {
         font-size: 0.75rem;
@@ -553,6 +699,53 @@
     <button class="tab" data-tab="network">네트워크</button>
     <button class="tab" data-tab="logs">기록</button>
     <button class="tab" data-tab="roadmap">로드맵</button>
+  </div>
+
+  <!-- ── 제어판 ─────────────────────────────────────────────── -->
+  <div class="ctrl-wrap" id="ctrl-wrap">
+    <div class="ctrl-toggle" onclick="toggleCtrl()">
+      <span style="color:var(--violet);font-weight:600;font-size:0.82rem;letter-spacing:0.3px">⚡ 제어판</span>
+      <span class="ctrl-chevron" id="ctrl-chevron">▼</span>
+    </div>
+    <div class="ctrl-body" id="ctrl-body">
+
+      <!-- 토큰 -->
+      <div class="ctrl-section">
+        <div class="ctrl-label">GitHub Token</div>
+        <input class="ctrl-input" type="password" id="ctrl-token" placeholder="ghp_..." autocomplete="off"/>
+        <div class="ctrl-btn-row">
+          <button class="ctrl-btn primary" onclick="saveToken()">토큰 저장</button>
+        </div>
+        <div class="ctrl-status" id="token-status"></div>
+      </div>
+
+      <!-- 훈련 주기 -->
+      <div class="ctrl-section">
+        <div class="ctrl-label">훈련 주기</div>
+        <select class="ctrl-select" id="ctrl-cron">
+          <option value="0 * * * *">매 1시간</option>
+          <option value="0 */2 * * *">매 2시간</option>
+          <option value="0 */4 * * *">매 4시간</option>
+          <option value="0 */6 * * *">매 6시간</option>
+          <option value="0 */12 * * *">매 12시간</option>
+          <option value="0 0 * * *">매일 1회 (자정)</option>
+        </select>
+        <div class="ctrl-btn-row">
+          <button class="ctrl-btn primary" onclick="saveSchedule()">저장</button>
+          <button class="ctrl-btn run" id="run-btn" onclick="runNow()">▶ 지금 실행</button>
+        </div>
+        <div class="ctrl-status" id="schedule-status"></div>
+      </div>
+
+      <!-- 실행 로그 -->
+      <div class="ctrl-log">
+        <div class="ctrl-label" style="margin-bottom:0.5rem">최근 실행 로그 <span style="font-size:0.65rem;color:var(--t4)">(클릭 시 새로고침)</span></div>
+        <div class="ctrl-log-box" id="ctrl-log-box" onclick="fetchRuns()" style="cursor:pointer">
+          <span class="log-info">— 토큰 입력 후 클릭하면 로드됩니다 —</span>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <div class="container">
@@ -1052,6 +1245,137 @@
         if (tabName === 'growth') setTimeout(() => renderGrowthChart(appState.data.hopA?.sessions || []), 100);
       });
     });
+
+    // ── 제어판 ──────────────────────────────────────────────────
+    const REPO  = 'Soundcode808/brain-lab';
+    const WF    = encodeURIComponent('호프_훈련.yml');
+    const YML   = encodeURIComponent('.github/workflows/호프_훈련.yml');
+
+    function ghHeaders() {
+      const tok = localStorage.getItem('gh_token') || '';
+      return { 'Authorization': `token ${tok}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' };
+    }
+
+    function setStatus(id, msg, ok) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.style.color = ok === true ? 'var(--green)' : ok === false ? 'var(--red)' : 'var(--t4)';
+    }
+
+    function logLine(html) {
+      const box = document.getElementById('ctrl-log-box');
+      const p = document.createElement('div');
+      p.innerHTML = `<span class="log-info">${new Date().toLocaleTimeString('ko-KR')}</span> ${html}`;
+      box.insertBefore(p, box.firstChild);
+    }
+
+    function toggleCtrl() {
+      const body = document.getElementById('ctrl-body');
+      const chev = document.getElementById('ctrl-chevron');
+      const open = body.classList.toggle('open');
+      chev.classList.toggle('open', open);
+      localStorage.setItem('ctrl_open', open ? '1' : '0');
+      if (open && localStorage.getItem('gh_token')) fetchRuns();
+    }
+
+    function saveToken() {
+      const tok = document.getElementById('ctrl-token').value.trim();
+      if (!tok) { setStatus('token-status', '토큰을 입력해주세요', false); return; }
+      localStorage.setItem('gh_token', tok);
+      document.getElementById('ctrl-token').value = '';
+      setStatus('token-status', '✓ 저장됨 (브라우저에만 보관)', true);
+      fetchRuns();
+    }
+
+    async function saveSchedule() {
+      const tok = localStorage.getItem('gh_token');
+      if (!tok) { setStatus('schedule-status', '토큰을 먼저 저장하세요', false); return; }
+      const cron = document.getElementById('ctrl-cron').value;
+      setStatus('schedule-status', '워크플로우 파일 읽는 중…', null);
+      try {
+        const r1 = await fetch(`https://api.github.com/repos/${REPO}/contents/.github/workflows/${decodeURIComponent(WF)}`, { headers: ghHeaders() });
+        if (!r1.ok) throw new Error(`파일 읽기 실패 (${r1.status})`);
+        const d1   = await r1.json();
+        const raw  = atob(d1.content.replace(/\n/g,''));
+        const upd  = raw.replace(/- cron:\s*'[^']*'/, `- cron: '${cron}'`);
+        if (raw === upd) { setStatus('schedule-status', '변경 없음 (이미 동일)', null); return; }
+        const r2 = await fetch(`https://api.github.com/repos/${REPO}/contents/.github/workflows/${decodeURIComponent(WF)}`, {
+          method: 'PUT', headers: ghHeaders(),
+          body: JSON.stringify({ message: `cron 업데이트: ${cron}`, content: btoa(unescape(encodeURIComponent(upd))), sha: d1.sha })
+        });
+        if (!r2.ok) throw new Error(`저장 실패 (${r2.status})`);
+        setStatus('schedule-status', `✓ 저장됨: ${cron}`, true);
+        logLine(`<span class="log-ok">✓ 스케줄 변경: ${document.getElementById('ctrl-cron').options[document.getElementById('ctrl-cron').selectedIndex].text}</span>`);
+      } catch(e) {
+        setStatus('schedule-status', '✗ ' + e.message, false);
+        logLine(`<span class="log-err">✗ 스케줄 저장 실패: ${e.message}</span>`);
+      }
+    }
+
+    async function runNow() {
+      const tok = localStorage.getItem('gh_token');
+      if (!tok) { setStatus('schedule-status', '토큰을 먼저 저장하세요', false); return; }
+      const btn = document.getElementById('run-btn');
+      btn.disabled = true; btn.textContent = '실행 중…';
+      setStatus('schedule-status', '워크플로우 실행 요청 중…', null);
+      try {
+        const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WF}/dispatches`, {
+          method: 'POST', headers: ghHeaders(),
+          body: JSON.stringify({ ref: 'main' })
+        });
+        if (r.status === 204) {
+          setStatus('schedule-status', '✓ 훈련 시작됨! (약 1-2분 소요)', true);
+          logLine(`<span class="log-run">▶ 훈련 수동 실행 요청됨</span>`);
+          setTimeout(fetchRuns, 5000);
+        } else {
+          throw new Error(`HTTP ${r.status}`);
+        }
+      } catch(e) {
+        setStatus('schedule-status', '✗ ' + e.message, false);
+        logLine(`<span class="log-err">✗ 실행 실패: ${e.message}</span>`);
+      } finally {
+        setTimeout(() => { btn.disabled = false; btn.textContent = '▶ 지금 실행'; }, 3000);
+      }
+    }
+
+    async function fetchRuns() {
+      const tok = localStorage.getItem('gh_token');
+      if (!tok) return;
+      const box = document.getElementById('ctrl-log-box');
+      box.innerHTML = '<span class="log-info">로딩 중…</span>';
+      try {
+        const r = await fetch(`https://api.github.com/repos/${REPO}/actions/runs?per_page=8&event=schedule,workflow_dispatch`, { headers: ghHeaders() });
+        if (!r.ok) throw new Error(`${r.status}`);
+        const d = await r.json();
+        const runs = d.workflow_runs || [];
+        if (!runs.length) { box.innerHTML = '<span class="log-info">실행 기록 없음</span>'; return; }
+        box.innerHTML = '';
+        runs.forEach(run => {
+          const dt   = new Date(run.created_at).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+          const cls  = run.conclusion === 'success' ? 'log-ok' : run.conclusion === 'failure' ? 'log-err' : 'log-run';
+          const icon = run.conclusion === 'success' ? '✓' : run.conclusion === 'failure' ? '✗' : '●';
+          const ev   = run.event === 'schedule' ? '자동' : '수동';
+          const div  = document.createElement('div');
+          div.innerHTML = `<span class="${cls}">${icon}</span> <span class="log-info">${dt}</span> <span style="color:var(--t3)">[${ev}]</span> <span class="${cls}">${run.conclusion || run.status}</span>`;
+          box.appendChild(div);
+        });
+      } catch(e) {
+        box.innerHTML = `<span class="log-err">로드 실패: ${e.message}</span>`;
+      }
+    }
+
+    // ── 제어판 초기화 ──────────────────────────────────────────
+    (function initCtrl() {
+      if (localStorage.getItem('ctrl_open') === '1') {
+        document.getElementById('ctrl-body').classList.add('open');
+        document.getElementById('ctrl-chevron').classList.add('open');
+        if (localStorage.getItem('gh_token')) setTimeout(fetchRuns, 500);
+      }
+      if (localStorage.getItem('gh_token')) {
+        setStatus('token-status', '✓ 토큰 저장됨', true);
+      }
+    })();
 
     loadData();
 
