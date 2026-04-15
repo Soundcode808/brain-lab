@@ -83,6 +83,22 @@
       },
       "action": "균형",
       "prediction": "예측 불가 (데이터 부족)"
+    },
+    {
+      "date": "2026-04-15T00:24:03.388136",
+      "session": 10,
+      "connections": 448054,
+      "formed": 42514,
+      "pruned": 19608,
+      "avg_active": 757.6,
+      "emotion": {
+        "satisfaction": 0.74,
+        "curiosity": 0.56,
+        "anxiety": 0.312,
+        "fatigue": 0.228
+      },
+      "action": "균형",
+      "prediction": "예측 불가 (데이터 부족)"
     }
   ]
 }
