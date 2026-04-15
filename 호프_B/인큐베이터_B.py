@@ -11,6 +11,11 @@ B는 그 신호를 자극으로 받아서 반응하며 성장한다.
 
 호프_A = 입력 처리 영역
 호프_B = 연상·통합 영역
+
+L7-사회성 (양방향):
+  A → B: A신호.json (활성 패턴)
+  B → A: B신호.json (B 활성 패턴 + 포화도 피드백)
+  다음 세션에서 A가 B 피드백을 반영해 자극 마스크 조정
 """
 
 import numpy as np
@@ -18,12 +23,13 @@ import json, os, sys
 from datetime import datetime
 from collections import defaultdict
 
-HOPE_B_DIR  = os.path.dirname(os.path.abspath(__file__))
-HOPE_A_DIR  = os.path.join(os.path.dirname(HOPE_B_DIR), '호프')
-STATE_FILE  = os.path.join(HOPE_B_DIR, '연결상태_B.npy')
-LOG_FILE    = os.path.join(HOPE_B_DIR, '성장기록_B.json')
-MIND_FILE   = os.path.join(HOPE_B_DIR, '마음상태_B.json')
-SIGNAL_FILE = os.path.join(HOPE_A_DIR, 'A신호.json')   # A가 남긴 신호
+HOPE_B_DIR     = os.path.dirname(os.path.abspath(__file__))
+HOPE_A_DIR     = os.path.join(os.path.dirname(HOPE_B_DIR), '호프')
+STATE_FILE     = os.path.join(HOPE_B_DIR, '연결상태_B.npy')
+LOG_FILE       = os.path.join(HOPE_B_DIR, '성장기록_B.json')
+MIND_FILE      = os.path.join(HOPE_B_DIR, '마음상태_B.json')
+SIGNAL_FILE    = os.path.join(HOPE_A_DIR, 'A신호.json')    # A가 남긴 신호
+B_SIGNAL_FILE  = os.path.join(HOPE_B_DIR, 'B신호.json')    # B → A 피드백
 
 # ── 뉴런 파라미터 ────────────────────────────────────────────────
 N_E, N_I = 1000, 250
@@ -259,6 +265,23 @@ if __name__ == '__main__':
     }
     log['sessions'].append(session_record)
     save_log(log)
+
+    # ── L7-사회성: B → A 피드백 신호 저장 ──────────────────────
+    max_conns    = N_E * N_E
+    saturation   = stats['connections'] / max_conns   # 연결 포화도 0~1
+    b_feedback   = {
+        'session':        session_num,
+        'active_indices': stats.get('active_indices', []),
+        'formed':         stats['formed'],
+        'connections':    stats['connections'],
+        'saturation':     round(saturation, 4),
+        # A에게 전달할 권고: 포화 0.9+ 이상이면 A가 다른 영역 탐색 권고
+        'suggest_diversify': saturation > 0.9,
+    }
+    with open(B_SIGNAL_FILE, 'w', encoding='utf-8') as f:
+        json.dump(b_feedback, f, ensure_ascii=False, indent=2)
+    print(f"  B → A 피드백 저장: 포화도 {saturation:.1%}, "
+          f"다양화 권고: {'예' if b_feedback['suggest_diversify'] else '아니오'}")
 
     print(f"\n  ── 결과 ──────────────────────────────")
     print(f"  연결 수:   {stats['connections']:>8,}개")
