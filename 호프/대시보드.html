@@ -812,6 +812,52 @@
           <div><div style="color:var(--t3);font-size:0.75rem;text-transform:uppercase;margin-bottom:0.5rem">감정 균형</div><div id="state-balance" style="font-size:1.1rem;color:var(--t1);font-weight:600">-</div></div>
         </div>
       </div>
+
+      <!-- ── 호프 요약 + 핵심 숫자 ─────────────────────────────── -->
+      <div class="card" style="margin-top:1.5rem">
+        <div class="card-title">호프 상태 요약</div>
+        <div id="hope-summary" style="font-size:0.92rem;color:var(--t2);line-height:1.85;margin-bottom:1.25rem">분석 중…</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem">
+          <div class="stat-card" style="padding:0.75rem 0.5rem">
+            <div class="stat-value" id="sum-sessions" style="font-size:1.5rem">0</div>
+            <div class="stat-label">총 세션</div>
+          </div>
+          <div class="stat-card" style="padding:0.75rem 0.5rem">
+            <div class="stat-value" id="sum-formed" style="font-size:1.5rem;color:var(--green)">+0</div>
+            <div class="stat-label">이번 성장</div>
+          </div>
+          <div class="stat-card" style="padding:0.75rem 0.5rem">
+            <div class="stat-value" id="sum-connections" style="font-size:1.5rem">0</div>
+            <div class="stat-label">총 연결</div>
+          </div>
+          <div class="stat-card" style="padding:0.75rem 0.5rem">
+            <div class="stat-value" id="countdown-display" style="font-size:1.5rem;color:var(--violet);font-variant-numeric:tabular-nums">--:--</div>
+            <div class="stat-label">다음 훈련까지</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── A·B 빠른 비교 ────────────────────────────────────── -->
+      <div class="grid-2col" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="card-title" style="color:var(--violet)">호프_A</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem">
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">연결</div><div id="ab-a-conn" style="font-weight:600;color:var(--t1);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">세션</div><div id="ab-a-sess" style="font-weight:600;color:var(--t1);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">이번 성장</div><div id="ab-a-formed" style="font-weight:600;color:var(--green);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">지배 감정</div><div id="ab-a-emo" style="font-weight:600;color:var(--t1);font-size:0.95rem">-</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:var(--yellow)">호프_B</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem">
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">연결</div><div id="ab-b-conn" style="font-weight:600;color:var(--t1);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">세션</div><div id="ab-b-sess" style="font-weight:600;color:var(--t1);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">이번 성장</div><div id="ab-b-formed" style="font-weight:600;color:var(--green);font-size:0.95rem">-</div></div>
+            <div><div style="color:var(--t4);font-size:0.7rem;margin-bottom:0.2rem">A신호 수신률</div><div id="ab-b-sig" style="font-weight:600;color:var(--violet);font-size:0.95rem">-</div></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="content" id="growth">
@@ -1082,6 +1128,32 @@
       renderSessionLogs(sessions);
       renderRoadmap();
       renderMiniChart(sessions);
+      renderSummary({ sessions, conn, formed, sessNum, domEmo, satP, predText, actionText,
+                      bSessions, hopBConn: lastBSess.connections||0, hopBFormed: lastBSess.formed||0, sigStr });
+    }
+
+    function renderSummary({ sessions, conn, formed, sessNum, domEmo, satP, predText, actionText,
+                              bSessions, hopBConn, hopBFormed, sigStr }) {
+      const emoColor = { 만족:'var(--green)', 불안:'var(--red)', 호기심:'var(--violet)', 피로:'var(--yellow)' };
+      const col = emoColor[domEmo] || 'var(--t1)';
+      const summary = `호프는 현재 <strong style="color:${col}">${domEmo}(${satP}%)</strong>이 지배적이며, ` +
+        `<strong style="color:var(--t1)">${actionText}</strong> 상태에서 ` +
+        `<strong style="color:var(--violet)">${predText}</strong>을 예측하고 있습니다. ` +
+        `이번 세션 <strong style="color:var(--green)">+${formed.toLocaleString()}개</strong>의 새 연결을 형성했으며, ` +
+        `호프_B는 <strong style="color:var(--yellow)">${hopBConn.toLocaleString()}개</strong>의 연결을 보유하고 있습니다.`;
+      document.getElementById('hope-summary').innerHTML = summary;
+      document.getElementById('sum-sessions').textContent    = sessNum;
+      document.getElementById('sum-formed').textContent      = '+' + formed.toLocaleString();
+      document.getElementById('sum-connections').textContent = conn.toLocaleString();
+      // A·B 비교
+      document.getElementById('ab-a-conn').textContent   = conn.toLocaleString();
+      document.getElementById('ab-a-sess').textContent   = sessNum;
+      document.getElementById('ab-a-formed').textContent = '+' + formed.toLocaleString();
+      document.getElementById('ab-a-emo').textContent    = domEmo;
+      document.getElementById('ab-b-conn').textContent   = hopBConn.toLocaleString();
+      document.getElementById('ab-b-sess').textContent   = bSessions.length;
+      document.getElementById('ab-b-formed').textContent = '+' + hopBFormed.toLocaleString();
+      document.getElementById('ab-b-sig').textContent    = sigStr + '%';
     }
 
     function renderMiniChart(sessions) {
@@ -1317,26 +1389,107 @@
       const tok = localStorage.getItem('gh_token');
       if (!tok) { setStatus('schedule-status', '토큰을 먼저 저장하세요', false); return; }
       const btn = document.getElementById('run-btn');
-      btn.disabled = true; btn.textContent = '실행 중…';
+      btn.disabled = true; btn.textContent = '요청 중…';
       setStatus('schedule-status', '워크플로우 실행 요청 중…', null);
+      const triggerTime = Date.now();
       try {
         const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WF}/dispatches`, {
           method: 'POST', headers: ghHeaders(),
           body: JSON.stringify({ ref: 'main' })
         });
         if (r.status === 204) {
-          setStatus('schedule-status', '✓ 훈련 시작됨! (약 1-2분 소요)', true);
-          logLine(`<span class="log-run">▶ 훈련 수동 실행 요청됨</span>`);
-          setTimeout(fetchRuns, 5000);
+          setStatus('schedule-status', '✓ 요청됨 — 진행상황 추적 중…', true);
+          const box = document.getElementById('ctrl-log-box');
+          box.innerHTML = `<div><span class="log-run">▶ 수동 실행 요청됨</span> <span class="log-info">${new Date().toLocaleTimeString('ko-KR')}</span></div>` +
+            `<div><span class="log-info">○</span> <span style="color:var(--t4)">GitHub Actions 준비 중…</span></div>`;
+          startPollRun(triggerTime);
         } else {
           throw new Error(`HTTP ${r.status}`);
         }
       } catch(e) {
         setStatus('schedule-status', '✗ ' + e.message, false);
-        logLine(`<span class="log-err">✗ 실행 실패: ${e.message}</span>`);
-      } finally {
-        setTimeout(() => { btn.disabled = false; btn.textContent = '▶ 지금 실행'; }, 3000);
+        const box = document.getElementById('ctrl-log-box');
+        box.innerHTML = `<div><span class="log-err">✗ 실행 실패: ${e.message}</span></div>`;
+        btn.disabled = false; btn.textContent = '▶ 지금 실행';
       }
+    }
+
+    let _pollTimer = null;
+
+    async function startPollRun(triggerTime) {
+      const btn = document.getElementById('run-btn');
+      btn.textContent = '실행 중…';
+      if (_pollTimer) clearTimeout(_pollTimer);
+      let attempts = 0;
+
+      const findRun = async () => {
+        attempts++;
+        if (attempts > 24) { btn.disabled = false; btn.textContent = '▶ 지금 실행'; return; }
+        try {
+          const r = await fetch(`https://api.github.com/repos/${REPO}/actions/runs?per_page=5`, { headers: ghHeaders() });
+          const d = await r.json();
+          const newRun = (d.workflow_runs || []).find(rn => new Date(rn.created_at).getTime() >= triggerTime - 10000 && rn.event === 'workflow_dispatch');
+          if (newRun) {
+            pollJobSteps(newRun.id);
+          } else {
+            _pollTimer = setTimeout(findRun, 6000);
+          }
+        } catch(e) { _pollTimer = setTimeout(findRun, 8000); }
+      };
+      _pollTimer = setTimeout(findRun, 5000);
+    }
+
+    async function pollJobSteps(runId) {
+      const btn = document.getElementById('run-btn');
+      const LABELS = {
+        'Set up job': '⚙ 환경 준비', 'Checkout': '📥 코드 가져오기',
+        '코드 가져오기': '📥 코드 가져오기', 'Python 설치': '🐍 Python 설치',
+        'numpy 설치': '📦 numpy 설치', '호프_A 훈련 (v2 — 감정·판단·예측)': '🧠 호프_A 훈련',
+        '호프_B 훈련 (A 신호 수신)': '🧠 호프_B 훈련', '성장 기록 저장': '💾 성장 기록 저장',
+        'Complete job': '✔ 완료'
+      };
+
+      const poll = async () => {
+        try {
+          const r = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${runId}/jobs`, { headers: ghHeaders() });
+          const d = await r.json();
+          const job = d.jobs?.[0];
+          if (!job) { _pollTimer = setTimeout(poll, 5000); return; }
+
+          const box = document.getElementById('ctrl-log-box');
+          box.innerHTML = '';
+
+          const runCls  = job.conclusion === 'success' ? 'log-ok' : job.conclusion === 'failure' ? 'log-err' : 'log-run';
+          const runIcon = job.conclusion === 'success' ? '✓' : job.conclusion === 'failure' ? '✗' : '●';
+          const runLabel= job.conclusion === 'success' ? '훈련 완료' : job.conclusion === 'failure' ? '훈련 실패' : '훈련 진행 중';
+          const dt = new Date(job.started_at || Date.now()).toLocaleTimeString('ko-KR');
+
+          const hdr = document.createElement('div');
+          hdr.innerHTML = `<span class="${runCls}">${runIcon} ${runLabel}</span> <span class="log-info">${dt} #${runId}</span>`;
+          box.appendChild(hdr);
+
+          const steps = (job.steps || []).filter(s => !['Set up job','Complete job','Post Checkout'].includes(s.name));
+          steps.forEach(step => {
+            const cls  = step.conclusion === 'success' ? 'log-ok' : step.conclusion === 'failure' ? 'log-err' : step.status === 'in_progress' ? 'log-run' : 'log-info';
+            const icon = step.conclusion === 'success' ? '✓' : step.conclusion === 'failure' ? '✗' : step.status === 'in_progress' ? '●' : '○';
+            const lbl  = LABELS[step.name] || step.name;
+            const div  = document.createElement('div');
+            div.style.paddingLeft = '0.75rem';
+            div.innerHTML = `<span class="${cls}">${icon}</span> <span style="color:var(--t3)">${lbl}</span>`;
+            box.appendChild(div);
+          });
+
+          if (job.status !== 'completed') {
+            _pollTimer = setTimeout(poll, 5000);
+          } else {
+            btn.disabled = false; btn.textContent = '▶ 지금 실행';
+            const ok = job.conclusion === 'success';
+            setStatus('schedule-status', ok ? '✓ 훈련 완료! 데이터 새로고침 중…' : '✗ 훈련 실패', ok);
+            if (ok) setTimeout(loadData, 4000);
+          }
+        } catch(e) { _pollTimer = setTimeout(poll, 8000); }
+      };
+      poll();
     }
 
     async function fetchRuns() {
@@ -1364,6 +1517,23 @@
         box.innerHTML = `<span class="log-err">로드 실패: ${e.message}</span>`;
       }
     }
+
+    // ── 카운트다운 타이머 ───────────────────────────────────────
+    (function startCountdown() {
+      function update() {
+        const now = new Date();
+        const next = new Date(now);
+        next.setMinutes(0, 0, 0);
+        next.setHours(next.getHours() + 1);
+        const diff = next - now;
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        const el = document.getElementById('countdown-display');
+        if (el) el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      }
+      update();
+      setInterval(update, 1000);
+    })();
 
     // ── 제어판 초기화 ──────────────────────────────────────────
     (function initCtrl() {
