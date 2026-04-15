@@ -132,6 +132,22 @@
       "avg_active": 669.4,
       "signal_from_A": 0.459,
       "formed_A": 38
+    },
+    {
+      "date": "2026-04-15T08:30:16.586683",
+      "session": 14,
+      "connections": 544334,
+      "formed": 49790,
+      "pruned": 3359,
+      "avg_active": 802.8,
+      "signal_from_A": 0.674,
+      "formed_A": 27455,
+      "emotion": {
+        "satisfaction": 1.0,
+        "curiosity": 0.527,
+        "anxiety": 0.311,
+        "fatigue": 0.202
+      }
     }
   ]
 }
