@@ -1112,7 +1112,8 @@
       const lastBSess  = bSessions.length > 0 ? bSessions[bSessions.length - 1] : {};
       const hopBConn   = lastBSess.connections || 0;
       const hopBFormed = lastBSess.formed      || 0;
-      const sigStr     = formed > 0 ? ((hopBFormed / formed) * 100).toFixed(1) : '0.0';
+      const sigFromA   = lastBSess.signal_from_A ?? 0;
+      const sigStr     = (sigFromA * 100).toFixed(1);
 
       document.querySelector('[data-agent="A"][data-stat="connections"]').textContent = conn.toLocaleString();
       document.querySelector('[data-agent="A"][data-stat="sessions"]').textContent    = sessNum;

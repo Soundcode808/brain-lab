@@ -20,7 +20,7 @@ v4 (L7 통합):
 """
 
 import numpy as np
-import json, os, sys
+import json, os, sys, time
 from datetime import datetime
 from collections import defaultdict
 
@@ -55,8 +55,8 @@ STIM_BASE = 20e-3
 DECAY_S = np.exp(-DT / TAU_SLOW)
 DECAY_F = np.exp(-DT / TAU_FAST)
 
-CONSISTENCY_FORM_THRESH = 4
-CONSISTENCY_PRUNE_MAX   = 1
+CONSISTENCY_FORM_THRESH = 3     # 3회 이상 같이 켜지면 연결 (기존 4)
+CONSISTENCY_PRUNE_MAX   = 2     # 2회 이하면 정리 대상 (기존 1 → 덜 잘림)
 MAX_NEW_CONN_RATIO = 0.10
 
 
@@ -84,7 +84,7 @@ class EmotionCore:
 
         self.satisfaction += (growth_rate * 1.5 - 0.03)
         self.curiosity    += (growth_rate * 0.8 - 0.05)
-        self.anxiety      += (prune_rate  * 2.0 - 0.04)
+        self.anxiety      += (prune_rate  * 0.3 - 0.05)  # 불안 축적 완화 (×1.0→×0.3)
         self.fatigue      += (activity_norm * 0.05 - 0.03)
 
         self.satisfaction = max(0.1, min(1.0, self.satisfaction))
@@ -167,7 +167,7 @@ class DecisionCore:
         ibg_mult   = 1.0
         n_trials   = 5
         form_prob  = 0.40
-        prune_prob = 0.20
+        prune_prob = 0.10   # 기본 pruning 확률 낮춤 (0.20→0.10)
         action     = "균형"
 
         if emotion.curiosity > 0.65 and emotion.fatigue < 0.5:
@@ -616,16 +616,19 @@ if __name__ == '__main__':
           f"트라이얼 {decision['n_trials']}회 | "
           f"연결확률 {decision['form_prob']:.0%}")
 
-    # ── L7-② 사회성: B 피드백 수신 → 자극 마스크 조정 ───────────
-    stim_mask = np.zeros(N, dtype=bool)
-    stim_mask[:int(N_E * 0.4)] = True
+    prev_connections = int(ee.sum())
+    seed = int(time.time() * 1000) & 0x7FFFFFFF   # 매 실행마다 다른 씨드
 
+    # ── 자극 패턴 다양화: 매 세션 랜덤하게 40% 뉴런 선택 ────────
+    rng_stim  = np.random.RandomState(seed % 99991)
+    stim_idx  = rng_stim.choice(N_E, int(N_E * 0.4), replace=False)
+    stim_mask = np.zeros(N, dtype=bool)
+    stim_mask[stim_idx] = True
+
+    # ── L7-② 사회성: B 피드백 수신 → 자극 마스크 조정 ───────────
     b_sig = load_signal_from_B()
     if b_sig:
         stim_mask = apply_b_feedback(stim_mask, b_sig)
-
-    prev_connections = int(ee.sum())
-    seed = session_num * 100
     ee, stats = run_session(
         ee, cf_mat, stim_mask,
         n_trials      = decision['n_trials'],

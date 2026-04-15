@@ -23,6 +23,10 @@ import json, os, sys
 from datetime import datetime
 from collections import defaultdict
 
+import time
+
+import time as _time
+
 HOPE_B_DIR     = os.path.dirname(os.path.abspath(__file__))
 HOPE_A_DIR     = os.path.join(os.path.dirname(HOPE_B_DIR), '호프')
 STATE_FILE     = os.path.join(HOPE_B_DIR, '연결상태_B.npy')
@@ -56,9 +60,62 @@ STIM_BASE = 20e-3
 DECAY_S = np.exp(-DT / TAU_SLOW)
 DECAY_F = np.exp(-DT / TAU_FAST)
 
-CONSISTENCY_FORM_THRESH = 4
-CONSISTENCY_PRUNE_MAX   = 1
+CONSISTENCY_FORM_THRESH = 3   # A와 동일 (4→3 완화)
+CONSISTENCY_PRUNE_MAX   = 2   # A와 동일 (1→2 완화)
 MAX_NEW_CONN_RATIO = 0.10
+
+
+# ══════════════════════════════════════════════
+#  B 감정 시스템 (A보다 단순 — 수신 신호에 반응)
+# ══════════════════════════════════════════════
+class EmotionCore_B:
+    """
+    B는 A와 달리 외부에서 신호를 받아 반응하는 구조.
+    A 신호가 강하면 호기심·만족이 올라가고,
+    자기 성장이 저조하면 불안이 올라간다.
+    """
+    def __init__(self):
+        self.satisfaction = 0.5
+        self.curiosity    = 0.5
+        self.anxiety      = 0.3
+        self.fatigue      = 0.2
+
+    def update(self, formed, pruned, avg_active, signal_strength):
+        growth_rate = min(formed / max(1, formed + pruned + 1), 0.5)
+        self.satisfaction += (growth_rate * 1.2 - 0.03)
+        self.curiosity    += (signal_strength * 0.1 - 0.04)   # A 신호 강할수록 호기심
+        self.anxiety      += (pruned / max(formed + pruned + 1, 1) * 0.8 - 0.04)
+        self.fatigue      += (avg_active / N_E * 0.04 - 0.03)
+        for attr in ('satisfaction', 'curiosity', 'anxiety', 'fatigue'):
+            setattr(self, attr, round(max(0.0, min(1.0, getattr(self, attr))), 3))
+
+    def label(self):
+        dom = max([('만족', self.satisfaction), ('호기심', self.curiosity),
+                   ('불안', self.anxiety), ('피로', self.fatigue)], key=lambda x: x[1])
+        return f"{dom[0]} ({dom[1]:.2f})"
+
+    def to_dict(self):
+        return {'satisfaction': self.satisfaction, 'curiosity': self.curiosity,
+                'anxiety': self.anxiety, 'fatigue': self.fatigue}
+
+    def from_dict(self, d):
+        self.satisfaction = d.get('satisfaction', 0.5)
+        self.curiosity    = d.get('curiosity', 0.5)
+        self.anxiety      = d.get('anxiety', 0.3)
+        self.fatigue      = d.get('fatigue', 0.2)
+
+
+def load_mind_b():
+    emotion = EmotionCore_B()
+    if os.path.exists(MIND_FILE):
+        with open(MIND_FILE, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+        emotion.from_dict(d.get('emotion', {}))
+    return emotion
+
+def save_mind_b(emotion):
+    with open(MIND_FILE, 'w', encoding='utf-8') as f:
+        json.dump({'emotion': emotion.to_dict()}, f, ensure_ascii=False, indent=2)
 
 
 # ── A 신호 읽기 ──────────────────────────────────────────────────
@@ -211,7 +268,7 @@ def run_session(ee_mask, cf_mat, stim_mask, stim_strength, n_trials=5, seed_base
         if rng_p.rand() < 0.40:
             ee_mask[idx[0], idx[1]] = True;  formed += 1
     for idx in np.argwhere(can_prune):
-        if rng_p.rand() < 0.20:
+        if rng_p.rand() < 0.10:   # A와 동일 (0.20→0.10 완화)
             ee_mask[idx[0], idx[1]] = False;  pruned += 1
 
     # B의 활성 패턴을 파일로 저장 (나중에 C가 생기면 사용)
@@ -234,12 +291,14 @@ if __name__ == '__main__':
     print("  A의 신호를 받아 연상하고 통합한다.")
     print("=" * 55)
 
-    log    = load_log()
-    ee     = load_state()
-    cf_mat = build_fixed(seed=1)
+    log     = load_log()
+    ee      = load_state()
+    cf_mat  = build_fixed(seed=1)
+    emotion = load_mind_b()
 
     session_num = len(log['sessions']) + 1
     print(f"\n세션 {session_num} 시작")
+    print(f"  현재 감정: {emotion.label()}")
 
     # A 신호 수신
     stim_mask, signal_strength, formed_a = load_signal_from_A()
@@ -247,9 +306,14 @@ if __name__ == '__main__':
 
     # 훈련
     prev_connections = int(ee.sum())
-    seed = session_num * 200
+    seed = int(_time.time() * 1000) & 0x7FFFFFFF   # 매 실행마다 다른 씨드
     ee, stats = run_session(ee, cf_mat, stim_mask, signal_strength,
                             n_trials=5, seed_base=seed)
+
+    # 감정 업데이트 + 저장
+    emotion.update(stats['formed'], stats['pruned'], stats['avg_active'], signal_strength)
+    save_mind_b(emotion)
+    print(f"  훈련 후 감정: {emotion.label()}")
 
     np.save(STATE_FILE, ee)
 
@@ -262,6 +326,7 @@ if __name__ == '__main__':
         'avg_active':     stats['avg_active'],
         'signal_from_A':  round(signal_strength, 3),
         'formed_A':       formed_a,
+        'emotion':        emotion.to_dict(),
     }
     log['sessions'].append(session_record)
     save_log(log)
