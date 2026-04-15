@@ -323,6 +323,22 @@
       },
       "action": "균형",
       "prediction": "폭발성장 (50%)"
+    },
+    {
+      "date": "2026-04-15T08:38:49.109441",
+      "session": 25,
+      "connections": 372638,
+      "formed": 34637,
+      "pruned": 8375,
+      "avg_active": 679.2,
+      "emotion": {
+        "satisfaction": 0.889,
+        "curiosity": 0.392,
+        "anxiety": 0.413,
+        "fatigue": 0.223
+      },
+      "action": "안정성장 😌",
+      "prediction": "중성장 (100%)"
     }
   ]
 }
