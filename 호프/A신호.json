@@ -1,5 +1,5 @@
 {
-  "session": 15,
+  "session": 16,
   "active_indices": [
     0,
     1,
@@ -440,13 +440,10 @@
     557,
     565,
     580,
-    600,
     616,
     622,
-    627,
     637,
     663,
-    685,
     698,
     712,
     720,
@@ -455,7 +452,6 @@
     761,
     844,
     846,
-    873,
     876,
     892,
     899,
@@ -465,12 +461,12 @@
     965,
     974
   ],
-  "formed": 1767,
-  "connections": 330210,
+  "formed": 879,
+  "connections": 318854,
   "emotion": {
-    "satisfaction": 0.644,
-    "curiosity": 0.392,
-    "anxiety": 0.729,
-    "fatigue": 0.212
+    "satisfaction": 0.613,
+    "curiosity": 0.357,
+    "anxiety": 0.726,
+    "fatigue": 0.209
   }
 }
