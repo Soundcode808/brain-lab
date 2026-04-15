@@ -243,6 +243,22 @@
       },
       "action": "조심 😟",
       "prediction": "소성장 (100%)"
+    },
+    {
+      "date": "2026-04-15T08:22:19.247685",
+      "session": 20,
+      "connections": 281606,
+      "formed": 73,
+      "pruned": 8198,
+      "avg_active": 458.2,
+      "emotion": {
+        "satisfaction": 0.501,
+        "curiosity": 0.237,
+        "anxiety": 0.678,
+        "fatigue": 0.198
+      },
+      "action": "조심 😟",
+      "prediction": "소성장 (100%)"
     }
   ]
 }
