@@ -12,36 +12,6 @@
       "avg_active": 400.0,
       "signal_from_A": 1.0,
       "formed_A": 11960
-    },
-    {
-      "date": "2026-04-15T00:24:05.369875",
-      "session": 2,
-      "connections": 379432,
-      "formed": 35550,
-      "pruned": 11626,
-      "avg_active": 883.2,
-      "signal_from_A": 0.756,
-      "formed_A": 42514
-    },
-    {
-      "date": "2026-04-15T00:24:32.406892",
-      "session": 3,
-      "connections": 413821,
-      "formed": 37943,
-      "pruned": 3554,
-      "avg_active": 952.2,
-      "signal_from_A": 0.517,
-      "formed_A": 17395
-    },
-    {
-      "date": "2026-04-15T00:27:35.258614",
-      "session": 4,
-      "connections": 450130,
-      "formed": 41382,
-      "pruned": 5073,
-      "avg_active": 936.6,
-      "signal_from_A": 0.476,
-      "formed_A": 9830
     }
   ]
 }

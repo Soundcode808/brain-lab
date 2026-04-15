@@ -1,24 +1,14 @@
 {
   "emotion": {
-    "satisfaction": 0.773,
-    "curiosity": 0.51,
-    "anxiety": 0.64,
-    "fatigue": 0.218
+    "satisfaction": 0.62,
+    "curiosity": 0.53,
+    "anxiety": 0.26,
+    "fatigue": 0.22
   },
   "prediction": {
-    "transitions": {
-      "대성장": {
-        "폭발성장": 1
-      },
-      "폭발성장": {
-        "중성장": 1
-      },
-      "중성장": {
-        "중성장": 1
-      }
-    },
-    "last_state": "중성장",
+    "transitions": {},
+    "last_state": "대성장",
     "correct": 0,
-    "total": 3
+    "total": 0
   }
 }

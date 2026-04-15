@@ -1007,13 +1007,14 @@
 
     async function loadData() {
       try {
-        const rA = await fetch('./성장기록.json');
+        const t = Date.now();  // 캐시 버스팅
+        const rA = await fetch('./성장기록.json?t=' + t);
         if (rA.ok) appState.data.hopA = await rA.json();
-        const rB = await fetch('../호프_B/성장기록_B.json');
+        const rB = await fetch('../호프_B/성장기록_B.json?t=' + t);
         if (rB.ok) appState.data.hopB = await rB.json();
-        const rE = await fetch('./마음상태.json');
+        const rE = await fetch('./마음상태.json?t=' + t);
         if (rE.ok) appState.data.emotion = await rE.json();
-        const rS = await fetch('./A신호.json');
+        const rS = await fetch('./A신호.json?t=' + t);
         if (rS.ok) appState.data.signals = await rS.json();
         renderDashboard();
       } catch (e) {
@@ -1424,30 +1425,64 @@
 
       const findRun = async () => {
         attempts++;
-        if (attempts > 24) { btn.disabled = false; btn.textContent = '▶ 지금 실행'; return; }
+        if (attempts > 30) { btn.disabled = false; btn.textContent = '▶ 지금 실행'; return; }
         try {
           const r = await fetch(`https://api.github.com/repos/${REPO}/actions/runs?per_page=5`, { headers: ghHeaders() });
           const d = await r.json();
-          const newRun = (d.workflow_runs || []).find(rn => new Date(rn.created_at).getTime() >= triggerTime - 10000 && rn.event === 'workflow_dispatch');
+          const newRun = (d.workflow_runs || []).find(rn =>
+            new Date(rn.created_at).getTime() >= triggerTime - 15000 &&
+            rn.event === 'workflow_dispatch'
+          );
           if (newRun) {
             pollJobSteps(newRun.id);
           } else {
-            _pollTimer = setTimeout(findRun, 6000);
+            _pollTimer = setTimeout(findRun, 5000);
           }
         } catch(e) { _pollTimer = setTimeout(findRun, 8000); }
       };
-      _pollTimer = setTimeout(findRun, 5000);
+      // 3초 후 첫 시도 (빠른 액션 대응)
+      _pollTimer = setTimeout(findRun, 3000);
+    }
+
+    const STEP_LABELS = {
+      '코드 가져오기': '📥 코드 가져오기',
+      'Python 설치': '🐍 Python 설치',
+      'numpy 설치': '📦 numpy 설치',
+      '호프_A 훈련 (v2 — 감정·판단·예측)': '🧠 호프_A 훈련',
+      '호프_B 훈련 (A 신호 수신)': '🧠 호프_B 훈련',
+      '성장 기록 저장': '💾 성장 기록 저장'
+    };
+    const SKIP_STEPS = new Set(['Set up job', 'Complete job', 'Post Checkout', 'Post Run actions/checkout@v4']);
+
+    function renderJobSteps(box, job, runId) {
+      box.innerHTML = '';
+      const runCls  = job.conclusion === 'success' ? 'log-ok' : job.conclusion === 'failure' ? 'log-err' : 'log-run';
+      const runIcon = job.conclusion === 'success' ? '✓' : job.conclusion === 'failure' ? '✗' : '●';
+      const runLabel= job.conclusion === 'success' ? '훈련 완료' : job.conclusion === 'failure' ? '훈련 실패' : '훈련 진행 중';
+      const dt = job.started_at ? new Date(job.started_at).toLocaleTimeString('ko-KR') : '';
+
+      const hdr = document.createElement('div');
+      hdr.style.marginBottom = '0.3rem';
+      hdr.innerHTML = `<span class="${runCls}">${runIcon} ${runLabel}</span> <span class="log-info">${dt}</span>`;
+      box.appendChild(hdr);
+
+      (job.steps || []).filter(s => !SKIP_STEPS.has(s.name)).forEach(step => {
+        const cls  = step.conclusion === 'success' ? 'log-ok'
+                   : step.conclusion === 'failure' ? 'log-err'
+                   : step.status === 'in_progress' ? 'log-run' : 'log-info';
+        const icon = step.conclusion === 'success' ? '✓'
+                   : step.conclusion === 'failure' ? '✗'
+                   : step.status === 'in_progress' ? '●' : '○';
+        const lbl  = STEP_LABELS[step.name] || step.name;
+        const div  = document.createElement('div');
+        div.style.paddingLeft = '0.75rem';
+        div.innerHTML = `<span class="${cls}">${icon}</span> <span style="color:var(--t3);font-size:0.77rem">${lbl}</span>`;
+        box.appendChild(div);
+      });
     }
 
     async function pollJobSteps(runId) {
       const btn = document.getElementById('run-btn');
-      const LABELS = {
-        'Set up job': '⚙ 환경 준비', 'Checkout': '📥 코드 가져오기',
-        '코드 가져오기': '📥 코드 가져오기', 'Python 설치': '🐍 Python 설치',
-        'numpy 설치': '📦 numpy 설치', '호프_A 훈련 (v2 — 감정·판단·예측)': '🧠 호프_A 훈련',
-        '호프_B 훈련 (A 신호 수신)': '🧠 호프_B 훈련', '성장 기록 저장': '💾 성장 기록 저장',
-        'Complete job': '✔ 완료'
-      };
 
       const poll = async () => {
         try {
@@ -1457,35 +1492,16 @@
           if (!job) { _pollTimer = setTimeout(poll, 5000); return; }
 
           const box = document.getElementById('ctrl-log-box');
-          box.innerHTML = '';
-
-          const runCls  = job.conclusion === 'success' ? 'log-ok' : job.conclusion === 'failure' ? 'log-err' : 'log-run';
-          const runIcon = job.conclusion === 'success' ? '✓' : job.conclusion === 'failure' ? '✗' : '●';
-          const runLabel= job.conclusion === 'success' ? '훈련 완료' : job.conclusion === 'failure' ? '훈련 실패' : '훈련 진행 중';
-          const dt = new Date(job.started_at || Date.now()).toLocaleTimeString('ko-KR');
-
-          const hdr = document.createElement('div');
-          hdr.innerHTML = `<span class="${runCls}">${runIcon} ${runLabel}</span> <span class="log-info">${dt} #${runId}</span>`;
-          box.appendChild(hdr);
-
-          const steps = (job.steps || []).filter(s => !['Set up job','Complete job','Post Checkout'].includes(s.name));
-          steps.forEach(step => {
-            const cls  = step.conclusion === 'success' ? 'log-ok' : step.conclusion === 'failure' ? 'log-err' : step.status === 'in_progress' ? 'log-run' : 'log-info';
-            const icon = step.conclusion === 'success' ? '✓' : step.conclusion === 'failure' ? '✗' : step.status === 'in_progress' ? '●' : '○';
-            const lbl  = LABELS[step.name] || step.name;
-            const div  = document.createElement('div');
-            div.style.paddingLeft = '0.75rem';
-            div.innerHTML = `<span class="${cls}">${icon}</span> <span style="color:var(--t3)">${lbl}</span>`;
-            box.appendChild(div);
-          });
+          renderJobSteps(box, job, runId);
 
           if (job.status !== 'completed') {
-            _pollTimer = setTimeout(poll, 5000);
+            _pollTimer = setTimeout(poll, 4000);
           } else {
             btn.disabled = false; btn.textContent = '▶ 지금 실행';
             const ok = job.conclusion === 'success';
             setStatus('schedule-status', ok ? '✓ 훈련 완료! 데이터 새로고침 중…' : '✗ 훈련 실패', ok);
-            if (ok) setTimeout(loadData, 4000);
+            // GitHub Pages 캐시 반영 대기 후 새로고침
+            if (ok) setTimeout(() => { loadData(); fetchRuns(); }, 8000);
           }
         } catch(e) { _pollTimer = setTimeout(poll, 8000); }
       };
