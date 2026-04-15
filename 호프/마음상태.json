@@ -1,9 +1,9 @@
 {
   "emotion": {
-    "satisfaction": 0.613,
-    "curiosity": 0.357,
-    "anxiety": 0.726,
-    "fatigue": 0.209
+    "satisfaction": 0.582,
+    "curiosity": 0.324,
+    "anxiety": 0.718,
+    "fatigue": 0.206
   },
   "prediction": {
     "transitions": {
@@ -18,12 +18,12 @@
         "소성장": 1
       },
       "소성장": {
-        "소성장": 3
+        "소성장": 4
       }
     },
     "last_state": "소성장",
-    "correct": 2,
-    "total": 7
+    "correct": 3,
+    "total": 8
   },
   "metacognition": {
     "strategy_scores": {
@@ -38,14 +38,11 @@
       "조심": [
         2868,
         1767,
-        879
+        879,
+        459
       ]
     },
     "recent_window": [
-      {
-        "action": "안정성장",
-        "formed": 9830
-      },
       {
         "action": "안정성장",
         "formed": 5376
@@ -61,8 +58,12 @@
       {
         "action": "조심",
         "formed": 879
+      },
+      {
+        "action": "조심",
+        "formed": 459
       }
     ],
-    "efficiency": 0.055
+    "efficiency": 0.03
   }
 }
