@@ -115,6 +115,22 @@
       },
       "action": "안정성장 😌",
       "prediction": "예측 불가 (데이터 부족)"
+    },
+    {
+      "date": "2026-04-15T01:18:54.043998",
+      "session": 12,
+      "connections": 386634,
+      "formed": 9830,
+      "pruned": 44452,
+      "avg_active": 479.0,
+      "emotion": {
+        "satisfaction": 0.727,
+        "curiosity": 0.501,
+        "anxiety": 0.6,
+        "fatigue": 0.224
+      },
+      "action": "안정성장 😌",
+      "prediction": "예측 불가 (데이터 부족)"
     }
   ]
 }
