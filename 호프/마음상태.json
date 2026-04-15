@@ -1,14 +1,32 @@
 {
   "emotion": {
-    "satisfaction": 0.62,
-    "curiosity": 0.53,
-    "anxiety": 0.26,
-    "fatigue": 0.22
+    "satisfaction": 0.725,
+    "curiosity": 0.555,
+    "anxiety": 0.311,
+    "fatigue": 0.23
   },
   "prediction": {
-    "transitions": {},
-    "last_state": "대성장",
+    "transitions": {
+      "대성장": {
+        "폭발성장": 1
+      }
+    },
+    "last_state": "폭발성장",
     "correct": 0,
-    "total": 0
+    "total": 1
+  },
+  "metacognition": {
+    "strategy_scores": {
+      "균형": [
+        42514
+      ]
+    },
+    "recent_window": [
+      {
+        "action": "균형",
+        "formed": 42514
+      }
+    ],
+    "efficiency": 1.0
   }
 }
