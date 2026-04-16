@@ -579,6 +579,22 @@
       },
       "action": "안정성장 😌",
       "prediction": "폭발성장 (67%)"
+    },
+    {
+      "date": "2026-04-16T09:13:34.859752",
+      "session": 41,
+      "connections": 954196,
+      "formed": 16498,
+      "pruned": 1884,
+      "avg_active": 978.0,
+      "emotion": {
+        "satisfaction": 0.871,
+        "curiosity": 0.477,
+        "anxiety": 0.024,
+        "fatigue": 0.361
+      },
+      "action": "안정성장 😌",
+      "prediction": "폭발성장 (50%)"
     }
   ]
 }
