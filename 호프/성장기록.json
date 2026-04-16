@@ -691,6 +691,22 @@
       },
       "action": "균형",
       "prediction": "소성장 (90%)"
+    },
+    {
+      "date": "2026-04-16T20:48:27.075603",
+      "session": 48,
+      "connections": 994339,
+      "formed": 616,
+      "pruned": 218,
+      "avg_active": 997.4,
+      "emotion": {
+        "satisfaction": 0.62,
+        "curiosity": 0.255,
+        "anxiety": 0.024,
+        "fatigue": 0.412
+      },
+      "action": "균형",
+      "prediction": "소성장 (91%)"
     }
   ]
 }
