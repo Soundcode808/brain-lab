@@ -1,9 +1,9 @@
 {
   "emotion": {
-    "satisfaction": 0.407,
+    "satisfaction": 0.391,
     "curiosity": 0.132,
     "anxiety": 0.024,
-    "fatigue": 0.447
+    "fatigue": 0.45
   },
   "prediction": {
     "transitions": {
@@ -22,13 +22,13 @@
         "소성장": 2
       },
       "소성장": {
-        "소성장": 20,
+        "소성장": 21,
         "대성장": 1
       }
     },
     "last_state": "소성장",
-    "correct": 35,
-    "total": 48
+    "correct": 36,
+    "total": 49
   },
   "metacognition": {
     "strategy_scores": {
@@ -46,7 +46,8 @@
         517,
         767,
         431,
-        207
+        207,
+        123
       ],
       "안정성장": [
         17395,
@@ -90,10 +91,6 @@
     "recent_window": [
       {
         "action": "균형",
-        "formed": 41
-      },
-      {
-        "action": "균형",
         "formed": 517
       },
       {
@@ -107,8 +104,12 @@
       {
         "action": "균형",
         "formed": 207
+      },
+      {
+        "action": "균형",
+        "formed": 123
       }
     ],
-    "efficiency": 0.004
+    "efficiency": 0.002
   }
 }
