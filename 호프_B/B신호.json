@@ -1,5 +1,5 @@
 {
-  "session": 45,
+  "session": 46,
   "active_indices": [
     0,
     1,
@@ -1002,8 +1002,8 @@
     998,
     999
   ],
-  "formed": 4,
-  "connections": 998997,
+  "formed": 2,
+  "connections": 998999,
   "saturation": 0.999,
   "suggest_diversify": true
 }
