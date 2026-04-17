@@ -1,5 +1,5 @@
 {
-  "session": 62,
+  "session": 63,
   "active_indices": [
     0,
     1,
@@ -1002,12 +1002,12 @@
     998,
     999
   ],
-  "formed": 9,
-  "connections": 998992,
+  "formed": 3,
+  "connections": 998995,
   "emotion": {
-    "satisfaction": 0.338,
+    "satisfaction": 0.327,
     "curiosity": 0.132,
     "anxiety": 0.024,
-    "fatigue": 0.458
+    "fatigue": 0.46
   }
 }
