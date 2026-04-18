@@ -1,9 +1,9 @@
 {
   "emotion": {
-    "satisfaction": 0.25,
+    "satisfaction": 0.246,
     "curiosity": 0.132,
     "anxiety": 0.024,
-    "fatigue": 0.473
+    "fatigue": 0.474
   },
   "prediction": {
     "transitions": {
@@ -22,13 +22,13 @@
         "소성장": 2
       },
       "소성장": {
-        "소성장": 38,
+        "소성장": 39,
         "대성장": 1
       }
     },
     "last_state": "소성장",
-    "correct": 53,
-    "total": 66
+    "correct": 54,
+    "total": 67
   },
   "metacognition": {
     "strategy_scores": {
@@ -59,6 +59,7 @@
         1,
         0,
         1,
+        0,
         0,
         0,
         0,
