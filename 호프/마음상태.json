@@ -22,13 +22,13 @@
         "소성장": 2
       },
       "소성장": {
-        "소성장": 70,
+        "소성장": 71,
         "대성장": 1
       }
     },
     "last_state": "소성장",
-    "correct": 85,
-    "total": 98
+    "correct": 86,
+    "total": 99
   },
   "metacognition": {
     "strategy_scores": {
@@ -59,6 +59,7 @@
         1,
         0,
         1,
+        0,
         0,
         0,
         0,
