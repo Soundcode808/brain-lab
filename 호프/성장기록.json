@@ -5123,6 +5123,22 @@
       },
       "action": "균형",
       "prediction": "소성장 (100%)"
+    },
+    {
+      "date": "2026-05-05T15:49:32.134014",
+      "session": 325,
+      "connections": 999000,
+      "formed": 0,
+      "pruned": 0,
+      "avg_active": 1000.0,
+      "emotion": {
+        "satisfaction": 0.21,
+        "curiosity": 0.132,
+        "anxiety": 0.024,
+        "fatigue": 0.474
+      },
+      "action": "균형",
+      "prediction": "소성장 (100%)"
     }
   ]
 }
