@@ -16163,6 +16163,22 @@
       },
       "action": "균형",
       "prediction": "소성장 (100%)"
+    },
+    {
+      "date": "2026-07-16T10:52:51.598432",
+      "session": 1015,
+      "connections": 999000,
+      "formed": 0,
+      "pruned": 0,
+      "avg_active": 1000.0,
+      "emotion": {
+        "satisfaction": 0.21,
+        "curiosity": 0.132,
+        "anxiety": 0.024,
+        "fatigue": 0.474
+      },
+      "action": "균형",
+      "prediction": "소성장 (100%)"
     }
   ]
 }
